@@ -23,7 +23,7 @@ export const JoinGameModal = ({ onJoinGame, onCancel, modalProps }: Props) => {
     };
 
     //@ts-ignore
-    const canPlayerJoinGame = (event: SyntheticEvent<string>) => setCanJoin(event.target && event.target.value.length > 0);
+    const canPlayerJoinGame = (event: ChangeEvent<HTMLInputElement>) => setCanJoin(event.target && event.target.value.length > 0);
 
     return (
         <Modal okText="Join game" cancelText="Exit" footer={
@@ -38,8 +38,10 @@ export const JoinGameModal = ({ onJoinGame, onCancel, modalProps }: Props) => {
                 </div>
             ]
         } {...modalProps}>
-            <h2>Input ongoing game ID to join</h2>
-            <GameIdInput placeholder="Game key" onChange={canPlayerJoinGame} />
+            <h2 style={{textAlign: 'center', marginBottom: 25}}>Input ongoing game ID to join</h2>
+            <div style={{marginLeft: 10, marginRight: 10}}>
+                <input placeholder="Game key..." onChange={canPlayerJoinGame} style={{width: '100%'}} />
+            </div>
         </Modal>
     );
 };

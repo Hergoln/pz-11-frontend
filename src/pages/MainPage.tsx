@@ -1,8 +1,8 @@
 import React, { Component} from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AppBar, Divider, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Container, Grid, IconButton, Stack, Toolbar, Typography} from '@mui/material';
-import { QuestionAnswer, Call, Home, Info } from '@mui/icons-material';
+import { AppBar, Divider, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Container, Grid, IconButton, Stack, Toolbar, Typography, SpeedDialAction, SpeedDialIcon, SpeedDial} from '@mui/material';
+import { QuestionAnswer, Call, Home, Info, Share, Logout, AccountCircle, Analytics } from '@mui/icons-material';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 
@@ -20,6 +20,13 @@ class MainPage extends Component {
         
         }
     };
+
+    actions = [
+        { icon: <AccountCircle />, name: 'Account' },
+        { icon: <Analytics />, name: 'Statistics' },
+        { icon: <Logout />, name: 'Logout' },
+        { icon: <Share />, name: 'Share' },
+      ];
 
     Item = styled(Paper)(({ theme }) => ({
         ...theme.typography.body2,
@@ -47,15 +54,15 @@ class MainPage extends Component {
                 <Paper style={this.styles.paperContainer}>
                 <main>
                 <Container sx={{ py: 5, px: 20 }} maxWidth='xl'>
-                <div style={{justifyContent: "center", textAlign: "center", padding: 2}} >
-                <h1 style={{fontSize: 50, padding: 1}}>Create bots. Join battles. </h1>
-                <h2 style={{fontSize: 30}}> Improve your AI skills and have some fun!</h2>
-                <h3 style={{fontSize: 8}}>(Also rage while
-                    watching your bot do absolutly the oposite of what you've been teaching that little shit.)</h3>
-                </div>
-                <Divider variant="middle" sx={{ py: 1}} />
 
-                <Grid container spacing={5} justifyContent="center" sx={{ py: 2}}>
+                <div style={{justifyContent: "center", textAlign: "center", padding: 2}} >
+                    <h1 style={{fontSize: 50, padding: 1}}>Create bots. Join battles. </h1>
+                    <h2 style={{fontSize: 30}}> Improve your AI skills and have some fun!</h2>
+               </div>
+
+                <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
+
+                <Grid container spacing={5} justifyContent="center" style={{ paddingBottom: 30, paddingTop: 30}}>
                     <Grid item xs={3} >
                         <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{boxShadow: "0 20px 40px -12px rgba(247,146,86,0.8)", backgroundColor: '#F7F7F7'}}>
                             <CardActionArea style={{backgroundColor: '#F7F7F7', color: '#3F3844'}}>
@@ -114,6 +121,25 @@ class MainPage extends Component {
                         </Card>
                     </Grid>
                 </Grid>
+
+                <div style={{justifyContent: "center", textAlign: "center", padding: 25}} >
+                <h3 style={{fontSize: 8}}>(Also rage while watching your bot do absolutly the oposite of what you've been teaching that little shit.)</h3>
+                </div>
+
+                <SpeedDial
+                    ariaLabel="SpeedDial basic example"
+                    sx={{ position: 'absolute', bottom: 16, right: 16 }}
+                    icon={<SpeedDialIcon />}
+                >
+                    {this.actions.map((action) => (
+                    <SpeedDialAction
+                        key={action.name}
+                        icon={action.icon}
+                        tooltipTitle={action.name}
+                    />
+                    ))}
+                </SpeedDial>
+
                 </Container>
                 </main>
                 </Paper>

@@ -1,4 +1,4 @@
-import React, {SyntheticEvent, useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 
 import {Button, Modal} from 'antd';
 import 'antd/dist/antd.css';
@@ -38,7 +38,7 @@ export const JoinGameModal = ({ onJoinGame, onCancel, modalProps }: Props) => {
                     </Button>
                 </JoinGameFooterContainer>
             ]
-        } {...modalProps}>
+        } closable={false} {...modalProps}>
             <h2 style={{textAlign: 'center', marginBottom: 25}}>Input ongoing game ID to join</h2>
             <StyledGameIdInput canPlayerJoinGame={canPlayerJoinGame} />
         </Modal>

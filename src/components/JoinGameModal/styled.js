@@ -11,10 +11,14 @@ export const JoinGameFooterContainer = styled.div`
 `;
 
 
-export const StyledGameIdInput = ({ canPlayerJoinGame }) => {
+export const StyledGameIdInput = ({ ...inputProps }) => {
     return (
         <div style={{marginLeft: 10, marginRight: 10}}>
-        <Input placeholder="Game key..." prefix={ <KeyIcon width={24} height={24} style={{marginRight: 5}}/> } onChange={canPlayerJoinGame} style={{width:'100%'}} />
+            <Input 
+                prefix={ <KeyIcon width={24} height={24} style={{marginRight: 5}}/> } 
+                style={{width:'100%'}}
+                {...inputProps}
+            />
         </div>
     );
 };

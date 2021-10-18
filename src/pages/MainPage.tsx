@@ -5,11 +5,14 @@ import { AppBar, Divider, Button, Card, CardActionArea, CardActions, CardContent
 import { QuestionAnswer, Call, Home, Info, Share, Logout, AccountCircle, Analytics } from '@mui/icons-material';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
+import { JoinGameModal } from '../components/JoinGameModal';
 
 
 class MainPage extends Component {
 
     theme = createTheme();
+
+    state = {joinGameModalVisible: false};
 
     styles = {
         paperContainer: {
@@ -61,7 +64,7 @@ class MainPage extends Component {
                </div>
 
                 <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
-
+                <JoinGameModal visible={this.state.joinGameModalVisible} onCancel={()=>this.setState({joinGameModalVisible: false})}/> 
                 <Grid container spacing={5} justifyContent="center" style={{ paddingBottom: 30, paddingTop: 30}}>
                     <Grid item xs={3} >
                         <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{boxShadow: "0 20px 40px -12px rgba(247,146,86,0.8)", backgroundColor: '#F7F7F7'}}>
@@ -80,7 +83,7 @@ class MainPage extends Component {
                     </Grid>
 
                     <Grid item xs={3} >
-                        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{boxShadow: "0 20px 40px -12px rgba(0, 178, 202,0.8)", backgroundColor: '#F7F7F7'}}>
+                        <Card onClick={()=>this.setState({joinGameModalVisible: true})} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{boxShadow: "0 20px 40px -12px rgba(0, 178, 202,0.8)", backgroundColor: '#F7F7F7'}}>
                             <CardActionArea style={{backgroundColor: '#F7F7F7', color: '#3F3844'}}>
                                 <CardMedia  component="img" sx={{pt: '5%'}} height="200"
                                     image="https://images.unsplash.com/photo-1570455679702-0424bae83b1b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1374&q=80" alt="I don't know either"

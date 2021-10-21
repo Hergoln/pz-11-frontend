@@ -1,22 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { w3cwebsocket as Websocket } from 'websocket';
 
-export class WebsocketHandler extends React.Component {
+interface WebsocketProps {
+    gameId: string;
+    onMessageReceived?: () => void;
+}
 
-    constructor(props: object) {
-        super(props);
+type Connection = Websocket | null;
 
-        this.state = { connection: null };
-    }
+export const WebsocketHandler = ({ gameId, onMessageReceived }: WebsocketProps) => {
 
-    componentDidMount() {
-        /*todo: connect to server here, using game id passed in props*/
-    }
+    const [connection, setConnection] = useState<Connection>(null);
 
-    componentWillUnmount() {
-        /*todo: close websocket connection here*/
-    }
+    useEffect(() => {
+        if (connection === null) {
+            //@ts-ignore
+            setConnection(new Websocket(process.env.API_SERVER_URL));
+        }
 
-    render() {
-        return (<></>);
-    }
+        return () => {
+            connection?.close();
+        };
+    }, [connection]);
+
+    return (<></>);
 };

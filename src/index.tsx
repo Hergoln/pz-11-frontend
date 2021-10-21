@@ -1,8 +1,11 @@
 import React from 'react';
+import { config } from 'dotenv';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+config({ path: `${__dirname}/.env` });
 
 ReactDOM.render(
   <React.StrictMode>

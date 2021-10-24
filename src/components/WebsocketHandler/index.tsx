@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { w3cwebsocket as Websocket, IMessageEvent, ICloseEvent } from 'websocket';
 
 interface WebsocketProps {
@@ -14,9 +14,16 @@ export const WebsocketHandler = ({ gameId, onMessageReceived, onConnectionClosed
 
     const [connection, setConnection] = useState<Connection>(null);
 
+    const handleGameKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            if (connection !== null && connection.readyState === Websocket.OPEN) {
+                connection.send(`pressed key: ${event.code}`);
+            }
+        }, [connection]);
+
+
     useEffect(() => {
         if (connection === null) {
-            console.log(`${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}`);
             const socket = new Websocket(`${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}`);
             socket.onmessage = onMessageReceived;
             // @ts-ignore
@@ -26,11 +33,13 @@ export const WebsocketHandler = ({ gameId, onMessageReceived, onConnectionClosed
             setConnection(socket);
         }
 
-        //returned function cleans up resources used/set up during useEffect
+        window.addEventListener('keydown', handleGameKeyDown);
+
         return () => {
+            window.removeEventListener('keydown', handleGameKeyDown);
             connection?.close();
         };
-    }, [connection, onMessageReceived, onConnectionClosed, onError]);
+    }, [connection, onMessageReceived, onConnectionClosed, onError, handleGameKeyDown]);
 
-    return (<></>);
+    return (<div></div>);
 };

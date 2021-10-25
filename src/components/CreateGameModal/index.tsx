@@ -4,6 +4,7 @@ import {Button, Modal} from 'antd';
 import 'antd/dist/antd.css';
 
 import TextField from '@mui/material/TextField';
+import axios from 'axios';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -17,7 +18,11 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
 
     const handleCreateGame = async () => {
         setIsLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 2000)); //temporary, to check if setting button as loading works
+        //await new Promise(resolve => setTimeout(resolve, 2000)); //temporary, to check if setting button as loading works
+        axios.post('/games/', {
+            title: "Hello World!",
+            body: "This is a new post."
+          })
         setIsLoading(false);
     };
 

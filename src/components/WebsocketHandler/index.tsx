@@ -25,7 +25,7 @@ export const WebsocketHandler = ({ gameId, onMessageReceived, onConnectionClosed
     useEffect(() => {
         if (connection === null) {
             //todo: pass gameId in the websocket connection url so backend can add us to a correct game session
-            const socket = new Websocket(`${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}:${process.env.REACT_APP_WEBSOCKET_SERVER_PORT}`);
+            const socket = new Websocket(`${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}`);
             socket.onmessage = onMessageReceived;
             // @ts-ignore
             socket.onclose = onConnectionClosed;

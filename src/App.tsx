@@ -29,7 +29,7 @@ function errorHandler(error: Error) {
 function App() {
   return (
     <>
-      <ToastContainer autoClose={2500} position="top-right" />
+      <ToastContainer autoClose={5000} position="top-right" />
       <div className="page-container">
         {/* <WebsocketHandler gameId={''} onMessageReceived={messageHandler} onConnectionClosed={closeHandler} onError={errorHandler} /> */}
         <div className='content'>

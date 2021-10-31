@@ -43,7 +43,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         }
 
         setIsLoading(true);
-        const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}/games/`;
+        const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}/games/`;
         await axios.post(requestUrl, {
             type: gameType,
             name: gameName
@@ -86,7 +86,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     onChange={(event: ChangeEvent<HTMLInputElement>) => setGameName(event.target.value)}
                 />
                 <ApiSelect
-                    resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}/games/`}
+                    resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}/games/`}
                     displayNameExtractor={(item: object) => item.toString()}
                     onSelect={(event: ChangeEvent<HTMLInputElement>) => setGameType(event.target.value)}
                     required={true}

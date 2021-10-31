@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import { Button, Modal } from 'antd';
 import 'antd/dist/antd.css';
@@ -19,10 +20,14 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
 
     const handleJoinGame = async () => {
         setIsLoading(true);
-        const options = {};
-        //todo: add default Access-Control-Allow-Origin headers to axios
+        const baseUrl = process.env.REACT_APP_API_SERVER_URL;
         //todo: make a function returning correct URL depending on which environment is running (e.g. http://localhost:5000 if dev, https://<heroku-url> if prod)
-        axios.post(`${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}`, {});
+        axios.put(`${baseUrl}/games/${gameId}`).then(response => {
+            toast.success("Game found! You will soon be redirected...");
+            //todo: add redirect to game view after ~2 seconds
+        }).catch(_err => {
+            toast.error("Cannot join game. It seems like the server is not responding or the game ID is not valid");
+        });
         setIsLoading(false);
     };
 

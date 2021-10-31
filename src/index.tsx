@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
-import './index.css';
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import './index.css';
 
 //@ts-ignore
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';

@@ -1,12 +1,14 @@
 import React from 'react';
-import './App.css';
 //@ts-ignore
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { IMessageEvent, ICloseEvent } from 'websocket';
+
 import MainPage from './pages/MainPage';
 import { InfoPage } from './pages/InfoPage';
-import { IMessageEvent, ICloseEvent } from 'websocket';
-import { ToastContainer } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
 
 
 function messageHandler(event: IMessageEvent) {

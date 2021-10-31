@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
 import { Button, Modal } from 'antd';
+
 import 'antd/dist/antd.css';
 
 import { JoinGameFooterContainer, StyledGameIdInput } from './styled';

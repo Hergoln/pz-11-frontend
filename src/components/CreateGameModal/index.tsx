@@ -1,16 +1,18 @@
 import React, { useState, ChangeEvent } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboard.svg';
+import Tooltip from '@mui/material/Tooltip';
+import TextField from '@mui/material/TextField';
 
 import { Button, Modal } from 'antd';
 import 'antd/dist/antd.css';
 
-import Tooltip from '@mui/material/Tooltip';
-import TextField from '@mui/material/TextField';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-
+import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboard.svg';
 import ApiSelect from '../ApiSelect';
+
+
+
 
 interface Props {
     onCreateGame?: (id: string) => void;

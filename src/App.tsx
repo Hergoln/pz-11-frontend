@@ -6,6 +6,8 @@ import MainPage from './pages/MainPage';
 import { InfoPage } from './pages/InfoPage';
 import { IMessageEvent, ICloseEvent } from 'websocket';
 import { WebsocketHandler } from './components/WebsocketHandler';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function messageHandler(event: IMessageEvent) {
   console.log("got a message: " + event.data);
@@ -21,17 +23,20 @@ function errorHandler(error: Error) {
 
 function App() {
   return (
-    <div className="page-container">
-      <WebsocketHandler gameId={''} onMessageReceived={messageHandler} onConnectionClosed={closeHandler} onError={errorHandler} />
-      <div className='content'>
-        <Router>
-          <Switch>
-            <Route exact path='/' component={MainPage} />
-            <Route exact path='/infopage/' component={InfoPage} />
-          </Switch>
-        </Router>
+    <>
+      <ToastContainer autoClose={2500} position="top-right" />
+      <div className="page-container">
+        {/* <WebsocketHandler gameId={''} onMessageReceived={messageHandler} onConnectionClosed={closeHandler} onError={errorHandler} /> */}
+        <div className='content'>
+          <Router>
+            <Switch>
+              <Route exact path='/' component={MainPage} />
+              <Route exact path='/infopage/' component={InfoPage} />
+            </Switch>
+          </Router>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -1,6 +1,7 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, { ChangeEvent, useState } from 'react';
+import axios from 'axios';
 
-import {Button, Modal} from 'antd';
+import { Button, Modal } from 'antd';
 import 'antd/dist/antd.css';
 
 import { JoinGameFooterContainer, StyledGameIdInput } from './styled';
@@ -20,7 +21,10 @@ export const JoinGameModal = ({ onJoinGame, onCancel, ...modalProps }: Props) =>
     const handleJoinGame = async () => {
         setIsLoading(true);
         onJoinGame?.(gameId);
-        await new Promise(resolve => setTimeout(resolve, 2000)); //temporary, to check if setting button as loading works
+        const options = {}
+        //todo: add default Access-Control-Allow-Origin headers to axios
+        //todo: make a function returning correct URL depending on which environment is running (e.g. http://localhost:5000 if dev, https://<heroku-url> if prod)
+        axios.post(`${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}`, {}, options);
         setIsLoading(false);
     };
 

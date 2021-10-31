@@ -24,9 +24,15 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const [gameType, setGameType] = useState('');
     const [gameName, setGameName] = useState('');
     const [gameKey, setGameKey] = useState('');
+    const [copyTooltipText, setCopyTooltipText] = useState('Copy to clipboard');
 
     const validateInputs = () => {
         return gameType && gameName;
+    };
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(gameKey);
+        setCopyTooltipText('Copied!');
     };
 
     const handleCreateGame = async () => {
@@ -101,11 +107,12 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     InputProps={{
                         readOnly: true,
                         endAdornment: (
-                            <Tooltip title="Copy to clipboard">
+                            <Tooltip title={copyTooltipText} onClose={() => setTimeout(() => setCopyTooltipText('Copy to clipboard'), 500)}>
                                 <ClipboardIcon
                                     width={24}
                                     height={24}
-                                    onClick={() => navigator.clipboard.writeText(gameKey)} cursor="pointer"
+                                    onClick={copyToClipboard}
+                                    cursor="pointer"
                                 />
                             </Tooltip>
                         )

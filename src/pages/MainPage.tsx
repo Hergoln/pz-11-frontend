@@ -1,26 +1,26 @@
 import React, { Component} from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AppBar, Divider, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Container, Grid, IconButton, Stack, Toolbar, Typography, SpeedDialAction, SpeedDialIcon, SpeedDial} from '@mui/material';
+import { AppBar, Divider, Button, Card, CardActionArea, CardContent, CardMedia, Container, Grid, Stack, Toolbar, Typography, SpeedDialAction, SpeedDialIcon, SpeedDial} from '@mui/material';
 import { QuestionAnswer, Call, Home, Info, Share, Logout, AccountCircle, Analytics } from '@mui/icons-material';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import { JoinGameModal } from '../components/JoinGameModal';
+import {CreateGameModal} from '../components/CreateGameModal';
 
 
 class MainPage extends Component {
 
     theme = createTheme();
 
-    state = {joinGameModalVisible: false};
+    state = {
+        joinGameModalVisible: false,
+        createGameModalVisible: false
+    };
 
     styles = {
         paperContainer: {
-            // backgroundImage: `url(https://images.unsplash.com/photo-1531685250784-7569952593d2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80)`,
-            // backgroundSize: "cover"
-            backgroundColor: '#F7F7F7'
-            // #F7F7F7
-        
+            backgroundColor: '#F7F7F7'        
         }
     };
 
@@ -64,10 +64,10 @@ class MainPage extends Component {
                </div>
 
                 <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
-                <JoinGameModal visible={this.state.joinGameModalVisible} onCancel={()=>this.setState({joinGameModalVisible: false})}/> 
+                <CreateGameModal visible={this.state.createGameModalVisible} onCancel={()=>this.setState({createGameModalVisible: false})}/> 
                 <Grid container spacing={5} justifyContent="center" style={{ paddingBottom: 30, paddingTop: 30}}>
                     <Grid item xs={3} >
-                        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{boxShadow: "0 20px 40px -12px rgba(247,146,86,0.8)", backgroundColor: '#F7F7F7'}}>
+                        <Card onClick={()=>this.setState({createGameModalVisible: true})} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{boxShadow: "0 20px 40px -12px rgba(247,146,86,0.8)", backgroundColor: '#F7F7F7'}}>
                             <CardActionArea style={{backgroundColor: '#F7F7F7', color: '#3F3844'}}>
                                 <CardMedia  component="img" sx={{pt: '5%'}} height="200"
                                     image="https://images.unsplash.com/photo-1525711857929-4272fb4a040f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmF0dGxlfGVufDB8MHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60" alt="Battle"
@@ -82,6 +82,7 @@ class MainPage extends Component {
                         </Card>
                     </Grid>
 
+                    <JoinGameModal visible={this.state.joinGameModalVisible} onCancel={()=>this.setState({joinGameModalVisible: false})}/> 
                     <Grid item xs={3} >
                         <Card onClick={()=>this.setState({joinGameModalVisible: true})} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{boxShadow: "0 20px 40px -12px rgba(0, 178, 202,0.8)", backgroundColor: '#F7F7F7'}}>
                             <CardActionArea style={{backgroundColor: '#F7F7F7', color: '#3F3844'}}>

@@ -44,15 +44,10 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
 
         setIsLoading(true);
         const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}/games/`;
-        const options = {
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            }
-        };
         await axios.post(requestUrl, {
             type: gameType,
             name: gameName
-        }, options).then((response) => {
+        }).then((response) => {
             /*
                 response structure:
                 id - uuid
@@ -87,7 +82,6 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     placeholder="Game session name..."
                     label="Game session name"
                     variant="standard"
-                    InputLabelProps={{ shrink: true }}
                     required={true}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => setGameName(event.target.value)}
                 />

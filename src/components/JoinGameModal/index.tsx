@@ -7,12 +7,11 @@ import 'antd/dist/antd.css';
 import { JoinGameFooterContainer, StyledGameIdInput } from './styled';
 
 interface Props {
-    onJoinGame?: (id: string) => void;
     onCancel?: () => void;
     [x: string]: any;
 }
 
-export const JoinGameModal = ({ onJoinGame, onCancel, ...modalProps }: Props) => {
+export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [canJoin, setCanJoin] = useState(false);
@@ -20,11 +19,10 @@ export const JoinGameModal = ({ onJoinGame, onCancel, ...modalProps }: Props) =>
 
     const handleJoinGame = async () => {
         setIsLoading(true);
-        onJoinGame?.(gameId);
-        const options = {}
+        const options = {};
         //todo: add default Access-Control-Allow-Origin headers to axios
         //todo: make a function returning correct URL depending on which environment is running (e.g. http://localhost:5000 if dev, https://<heroku-url> if prod)
-        axios.post(`${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}`, {}, options);
+        axios.post(`${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}`, {});
         setIsLoading(false);
     };
 

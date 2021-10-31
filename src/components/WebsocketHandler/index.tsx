@@ -24,7 +24,7 @@ export const WebsocketHandler = ({ gameId, onMessageReceived, onConnectionClosed
 
     useEffect(() => {
         if (connection === null) {
-            const socket = new Websocket(`${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}`);
+            const socket = new Websocket(`${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}:${process.env.REACT_APP_WEBSOCKET_SERVER_PORT}`);
             socket.onmessage = onMessageReceived;
             // @ts-ignore
             socket.onclose = onConnectionClosed;

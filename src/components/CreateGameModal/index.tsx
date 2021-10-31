@@ -36,7 +36,6 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     };
 
     const handleCreateGame = async () => {
-
         if (!validateInputs()) {
             toast.warning("It seems like your input game data is incorrect. Please check it and try again.");
             return;
@@ -86,8 +85,10 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     onChange={(event: ChangeEvent<HTMLInputElement>) => setGameName(event.target.value)}
                 />
                 <ApiSelect
-                    resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}/games/`}
-                    displayNameExtractor={(item: object) => item.toString()}
+                    resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}/games/types/`}
+                    //@ts-ignore
+                    displayNameExtractor={(item: object) => item.name}
+                    checkThroughKeys={['game_types']}
                     onSelect={(event: ChangeEvent<HTMLInputElement>) => setGameType(event.target.value)}
                     required={true}
                     label="Game type"
@@ -97,7 +98,6 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     placeholder="Game key..."
                     id="standard-read-only-input"
                     label="Game code"
-                    defaultValue="xUGHg7j"
                     InputProps={{
                         readOnly: true,
                         endAdornment: (

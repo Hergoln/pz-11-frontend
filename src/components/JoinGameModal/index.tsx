@@ -21,10 +21,11 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const handleJoinGame = async () => {
         setIsLoading(true);
         const baseUrl = process.env.REACT_APP_API_SERVER_URL;
-        //todo: make a function returning correct URL depending on which environment is running (e.g. http://localhost:5000 if dev, https://<heroku-url> if prod)
         axios.put(`${baseUrl}/games/${gameId}`).then(response => {
             toast.success("Game found! You will soon be redirected...");
-            //todo: add redirect to game view after ~2 seconds
+            setTimeout(() => {
+                //redirect user to another page here, passing required data (such as game ID etc.) along
+            }, 2000);
         }).catch(_err => {
             toast.error("Cannot join game. It seems like the server is not responding or the game ID is not valid");
         });

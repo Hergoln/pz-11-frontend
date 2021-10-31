@@ -1,17 +1,12 @@
 import React from 'react';
-import axios from 'axios';
 import './App.css';
 //@ts-ignore
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import { InfoPage } from './pages/InfoPage';
 import { IMessageEvent, ICloseEvent } from 'websocket';
-import { WebsocketHandler } from './components/WebsocketHandler';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-//@ts-ignore
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
 
 function messageHandler(event: IMessageEvent) {

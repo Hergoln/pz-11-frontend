@@ -3,8 +3,11 @@ import React, { useState } from 'react';
 import { Button, Modal } from 'antd';
 import 'antd/dist/antd.css';
 
+import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
+
+import ApiSelect from '../ApiSelect';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -18,7 +21,6 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
 
     const handleCreateGame = async () => {
         setIsLoading(true);
-        //await new Promise(resolve => setTimeout(resolve, 2000)); //temporary, to check if setting button as loading works
         const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}/games/`;
         const options = {
             headers: {
@@ -51,16 +53,34 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             ]
         } closable={false} {...modalProps}>
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Copy code and share with your friends</h2>
-            <TextField
-                placeholder="Game key..."
-                id="standard-read-only-input"
-                label="Game code"
-                defaultValue="xUGHg7j"
-                InputProps={{
-                    readOnly: true,
-                }}
-                variant="standard"
-            />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <TextField
+                    placeholder="Game session name..."
+                    label="Game session name"
+                    variant="standard"
+                    InputLabelProps={{ shrink: true }}
+                    required={true}
+                />
+                <InputLabel id="game-type-label" style={{ marginTop: 10, fontSize: 12 }}>Game type</InputLabel>
+                <ApiSelect
+                    resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}/games/`}
+                    displayNameExtractor={(item: object) => item.toString()}
+                    onSelect={(event) => console.log(event.target.value)}
+                    style={{ marginBottom: 20 }}
+                    labelId="game-type-label"
+                    defaultValue=""
+                />
+                <TextField
+                    placeholder="Game key..."
+                    id="standard-read-only-input"
+                    label="Game code"
+                    defaultValue="xUGHg7j"
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    variant="standard"
+                />
+            </div>
         </Modal>
     );
 };

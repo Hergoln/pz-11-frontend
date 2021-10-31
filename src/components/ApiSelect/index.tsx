@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 interface ApiSelectProps {
     resourceEndpoint: string;
     displayNameExtractor: (o: object) => string;
-    onSelect: (event: ChangeEvent) => void;
+    onSelect: (event: ChangeEvent<HTMLInputElement>) => void;
     style?: object;
     [x: string]: any;
 }
@@ -22,8 +22,8 @@ const ApiSelect = ({ resourceEndpoint, displayNameExtractor, onSelect, style, ..
         });
     }, [resourceEndpoint])
 
-    return (
 
+    return (
         <TextField onChange={onSelect} style={style} variant="standard" select={true} {...selectProps}>
             {
                 options?.map((item, index) => {

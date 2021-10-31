@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 
 import { Button, Modal } from 'antd';
 import 'antd/dist/antd.css';
 
-import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
 import axios from 'axios';
 
 import ApiSelect from '../ApiSelect';
@@ -31,10 +29,10 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             }
         };
         await axios.post(requestUrl, {
-            type: 'agarnt',
-            name: 'Just work for fuck\'s sake'
+            type: gameType,
+            name: gameName
         }, options).then(response => {
-            console.log("Game created! response: " + response.data);
+            console.log("Game created! response: " + JSON.stringify(response.data));
         }).catch(err => {
             console.log("server made a fucky wucky uwu");
             console.log(err);
@@ -63,14 +61,15 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     variant="standard"
                     InputLabelProps={{ shrink: true }}
                     required={true}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => setGameName(event.target.value)}
                 />
                 <ApiSelect
                     resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}:${process.env.REACT_APP_API_SERVER_PORT}/games/`}
                     displayNameExtractor={(item: object) => item.toString()}
-                    onSelect={(event) => console.log(event)}
+                    onSelect={(event: ChangeEvent<HTMLInputElement>) => setGameType(event.target.value)}
                     required={true}
                     label="Game type"
-                    InputLabelProps={{ shrink: true }}
+                    defaultValue=""
                 />
                 <TextField
                     placeholder="Game key..."

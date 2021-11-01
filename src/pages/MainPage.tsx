@@ -1,12 +1,13 @@
 import React, { Component} from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AppBar, Divider, Button, Card, CardActionArea, CardContent, CardMedia, Container, Grid, Stack, Toolbar, Typography, SpeedDialAction, SpeedDialIcon, SpeedDial} from '@mui/material';
-import { QuestionAnswer, Call, Home, Info, Share, Logout, AccountCircle, Analytics } from '@mui/icons-material';
+import { Divider, Card, CardActionArea, CardContent, CardMedia, Container, Grid, Typography, SpeedDialAction, SpeedDialIcon, SpeedDial} from '@mui/material';
+import { Share, Logout, AccountCircle, Analytics } from '@mui/icons-material';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import { JoinGameModal } from '../components/JoinGameModal';
 import {CreateGameModal} from '../components/CreateGameModal';
+import Menu from '../components/Menu';
 
 
 class MainPage extends Component {
@@ -42,17 +43,7 @@ class MainPage extends Component {
         return (
             <ThemeProvider theme={this.theme}>
             <CssBaseline />
-                <AppBar position="static" style={{backgroundColor: '#FFFFFF', color: '#3F3844'}}>
-                <Toolbar>
-                    <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}><b>Bots battles ⚔</b></Typography>
-                    <Stack spacing={2} direction="row" justifyContent="flex-end">
-                        <Button style={{backgroundColor: '#FFFFFF', color: '#00B2CA'}} size="large" endIcon={<Home />}><b>Home</b></Button>
-                        <Button style={{backgroundColor: '#FFFFFF', color: '#7DCFB6'}} size="large" endIcon={<Call />}><b>About</b></Button>
-                        <Button style={{backgroundColor: '#FFFFFF', color: '#FBD1A2'}} size="large" endIcon={<Info />}><b>Contact</b></Button>
-                        <Button style={{backgroundColor: '#FFFFFF', color: '#F79256'}} size="large" endIcon={<QuestionAnswer />}><b>FAQ</b></Button>
-                    </Stack>
-                </Toolbar>
-                </AppBar>
+                <Menu />
                 
                 <Paper style={this.styles.paperContainer}>
                 <main>

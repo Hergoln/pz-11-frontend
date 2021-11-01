@@ -3,7 +3,9 @@ import './App.css';
 //@ts-ignore
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'; 
 import MainPage from './pages/MainPage';
-import { InfoPage } from './pages/InfoPage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
+import { FAQPage } from './pages/FAQPage';
 
 function App() {
   return (
@@ -12,7 +14,9 @@ function App() {
         <Router>
           <Switch>
             <Route exact path='/' component={MainPage} />
-            <Route exact path='/infopage/' component={InfoPage} />
+            <Route exact path='/about/' component={AboutPage} />
+            <Route exact path='/contact/' component={ContactPage} />
+            <Route exact path='/faq/' component={FAQPage} />
           </Switch>
         </Router>
       </div>

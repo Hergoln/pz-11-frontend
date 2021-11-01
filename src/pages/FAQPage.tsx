@@ -87,7 +87,7 @@ class FAQPage extends Component {
                         </Accordion>
                     
                         <Accordion>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon style={{color: '#00B2CA'}}/>} aria-controls="panel2a-content" id="panel2a-header">
+                            <AccordionSummary expandIcon={<ExpandMoreIcon style={{color: '#FBD1A2'}}/>} aria-controls="panel2a-content" id="panel2a-header">
                             <Typography> What can I do if my bot is not learning in a way I designed? </Typography>
                             </AccordionSummary>
                             <AccordionDetails>

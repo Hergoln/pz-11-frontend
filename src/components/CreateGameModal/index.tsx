@@ -5,6 +5,7 @@ import 'antd/dist/antd.css';
 
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -22,7 +23,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         axios.post('/games/', {
             title: "Hello World!",
             body: "This is a new post."
-          })
+          }).then(response => console.log(response.data)).catch(err => toast.error("server made a fucky wucky uwu"));
         setIsLoading(false);
     };
 
@@ -38,7 +39,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     </Button>
                 </div>
             ]
-        } closable={false} {...modalProps}>
+        } closable={true} maskClosable={true} {...modalProps}>
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Copy code and share with your friends</h2>
             <TextField
                 placeholder="Game key..."

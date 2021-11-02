@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import TextField from '@mui/material/TextField';
-import Accordion from '@mui/material/Accordion';
 
 import { styled as muiStyled } from '@mui/material/styles';
-import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 
 const NoIncrementInput = styled(TextField)`

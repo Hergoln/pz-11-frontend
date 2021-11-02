@@ -16,8 +16,6 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-
-
 import { ConfigVarType, ConfigVarValue } from '../../global/config/types';
 import { NoIncrementInput, AccordionSummary } from './styled';
 import { capitalize } from '../../global/util/stringOperations';

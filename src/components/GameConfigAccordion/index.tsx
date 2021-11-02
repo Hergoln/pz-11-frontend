@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -12,15 +11,15 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-
 
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import { FormControlLabel } from '@mui/material';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
+
 
 import { ConfigVarType, ConfigVarValue } from '../../global/config/types';
-import { NoIncrementInput } from './styled';
+import { NoIncrementInput, AccordionSummary } from './styled';
 import { capitalize } from '../../global/util/stringOperations';
 
 interface GameConfig {
@@ -101,7 +100,7 @@ const GameConfigAccordion = ({ gameType }: Props) => {
                 <Typography>Game configuration</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <TableContainer component={Paper}>
+                <TableContainer>
                     <Table>
                         <TableHead>
                             <TableRow>

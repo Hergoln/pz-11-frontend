@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 import TextField from '@mui/material/TextField';
+import Accordion from '@mui/material/Accordion';
+
+import { styled as muiStyled } from '@mui/material/styles';
+import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 
 const NoIncrementInput = styled(TextField)`
     input::-webkit-outer-spin-button,
@@ -13,4 +18,23 @@ const NoIncrementInput = styled(TextField)`
     }
 `;
 
-export { NoIncrementInput };
+const AccordionSummary = muiStyled((props) => (
+    <MuiAccordionSummary
+        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+        {...props}
+    />
+))(({ theme }) => ({
+    backgroundColor:
+        theme.palette.mode === 'dark'
+            ? 'rgba(255, 255, 255, .05)'
+            : 'rgba(0, 0, 0, .03)',
+    flexDirection: 'row-reverse',
+    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+        transform: 'rotate(90deg)',
+    },
+    '& .MuiAccordionSummary-content': {
+        marginLeft: theme.spacing(1),
+    },
+}));
+
+export { NoIncrementInput, AccordionSummary };

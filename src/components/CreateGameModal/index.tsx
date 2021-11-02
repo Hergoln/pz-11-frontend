@@ -97,7 +97,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     checkThroughKeys={['game_types']}
                     onSelect={(event: ChangeEvent<HTMLInputElement>) => setGameType(event.target.value)}
                     required={true}
-                    label="Game type"
+                    label="Game"
                     defaultValue=""
                 />
                 <TextField

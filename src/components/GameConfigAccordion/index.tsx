@@ -17,8 +17,11 @@ import Paper from '@mui/material/Paper';
 
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
+import { FormControlLabel } from '@mui/material';
 
 import { ConfigVarType, ConfigVarValue } from '../../global/config/types';
+import { NoIncrementInput } from './styled';
+import { capitalize } from '../../global/util/stringOperations';
 
 interface GameConfig {
     variables: ConfigVariable[];
@@ -36,31 +39,31 @@ interface Props {
 
 const GameConfigAccordion = ({ gameType }: Props) => {
 
-    const formatVariableName = (varName: string, varType: ConfigVarType) => {
-        return varName;
+    const formatVariableName = (varName: string) => {
+        return capitalize(varName.split("_").join(" "));
     };
 
-    //@ts-ignore
+    const setConfigVar = (name: string, value: ConfigVarValue) => { };
+
     const getInputForType = (varType: ConfigVarType) => {
         let comp;
         switch (varType) {
             case ConfigVarType.BOOLEAN:
-                comp = <Checkbox />
+                comp = <FormControlLabel control={<Checkbox />} label="Enabled" />
                 break;
             case ConfigVarType.FLOAT:
-                comp = <TextField />
+                comp = <NoIncrementInput inputProps={{ pattern: /-?[0-9]+\.[0-9]+/, maxLength: 20, type: 'number' }} placeholder="E.g. 0.01" variant="standard" />
                 break;
             case ConfigVarType.INTEGER:
-                comp = <TextField />
+                comp = <NoIncrementInput inputProps={{ maxLength: 20, type: 'number' }} placeholder="E.g. 100" variant="standard" />
                 break;
             case ConfigVarType.STRING:
-                comp = <TextField />
+                comp = <TextField placeholder="Type any text here..." variant="standard" inputProps={{ maxLength: 150 }} />
                 break;
         };
         return comp;
     };
 
-    const setConfigVar = (name: string, value: ConfigVarValue) => { };
 
     //note: after backend creates an endpoint to return game config then it should be moved to useEffect with useState
     const configMock = {
@@ -99,26 +102,28 @@ const GameConfigAccordion = ({ gameType }: Props) => {
             </AccordionSummary>
             <AccordionDetails>
                 <TableContainer component={Paper}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="left">Variable</TableCell>
-                            <TableCell align="left">Type</TableCell>
-                            <TableCell align="left">Value</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            config.variables.map((variableData: ConfigVariable) => {
-                                return (
-                                    <TableRow>
-                                        <TableCell>{formatVariableName(variableData.name, variableData.type)}</TableCell>
-                                        <TableCell>{variableData.type.toString()}</TableCell>
-                                        <TableCell>{getInputForType(variableData.type)}</TableCell>
-                                    </TableRow>
-                                );
-                            })
-                        }
-                    </TableBody>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="left"><b>Variable</b></TableCell>
+                                {/* <TableCell align="left">Type</TableCell> */}
+                                <TableCell align="left"><b>Value</b></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                config.variables.map((variableData: ConfigVariable) => {
+                                    return (
+                                        <TableRow>
+                                            <TableCell>{formatVariableName(variableData.name)}</TableCell>
+                                            {/* <TableCell>{variableData.type.toString()}</TableCell> */}
+                                            <TableCell>{getInputForType(variableData.type)}</TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                            }
+                        </TableBody>
+                    </Table>
                 </TableContainer>
             </AccordionDetails>
         </Accordion>

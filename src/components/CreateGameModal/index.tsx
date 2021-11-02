@@ -12,8 +12,6 @@ import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboa
 import ApiSelect from '../ApiSelect';
 
 
-
-
 interface Props {
     onCreateGame?: (id: string) => void;
     onCancel?: () => void;
@@ -82,7 +80,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     </Button>
                 </div>
             ]
-        } closable={false} {...modalProps}>
+        } closable={true} maskClosable={true} {...modalProps}>
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Copy code and share with your friends</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <TextField

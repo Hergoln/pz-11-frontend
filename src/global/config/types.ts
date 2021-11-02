@@ -6,3 +6,7 @@ export enum ConfigVarType {
     FLOAT = 'float',
     BOOLEAN = 'bool'
 };
+
+type ConfigVarValue = number | boolean | string;
+
+export type { ConfigVarValue };

@@ -10,6 +10,7 @@ import 'antd/dist/antd.css';
 
 import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboard.svg';
 import ApiSelect from '../ApiSelect';
+import GameConfigAccordion from '../GameConfigAccordion';
 
 
 interface Props {
@@ -120,6 +121,9 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     variant="standard"
                     value={gameKey}
                 />
+                {
+                    gameType && <GameConfigAccordion gameType={gameType} />
+                }
             </div>
         </Modal>
     );

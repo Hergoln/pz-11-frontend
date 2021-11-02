@@ -23,6 +23,7 @@ interface Props {
 export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props) => {
 
     const [isLoading, setIsLoading] = useState(false);
+    const [gameCreated, setGameCreated] = useState(false);
     const [gameType, setGameType] = useState('');
     const [gameName, setGameName] = useState('');
     const [gameKey, setGameKey] = useState('');
@@ -58,18 +59,23 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             //@ts-ignore
             setGameKey(response.data.id);
             toast.success(`Game created successfully! Check a textfield on the bottom for the game id!`);
+            setGameCreated(true);
         }).catch(err => {
             toast.error("Server made a fucky wucky uwu: " + err.toString());
         });
         setIsLoading(false);
     };
 
+    const handleJoinGame = async () => {
+
+    };
+
     return (
-        <Modal okText="Create game" cancelText="Exit" footer={
+        <Modal footer={
             [
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }} key={0}>
-                    <Button type="primary" onClick={handleCreateGame} style={{ marginRight: 10 }} loading={isLoading}>
-                        {!isLoading ? 'Create game' : 'Creating...'}
+                    <Button type="primary" onClick={gameCreated ? handleJoinGame : handleCreateGame} style={{ marginRight: 10 }} loading={isLoading}>
+                        {!isLoading ? (gameCreated ? "Join game" : "Create game") : (gameCreated ? "Joining game..." : "Creating game...")}
                     </Button>
                     <Button onClick={onCancel} style={{ marginLeft: 10 }}>
                         Exit

@@ -12,6 +12,7 @@ import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboa
 import ApiSelect from '../ApiSelect';
 import GameConfigAccordion from '../GameConfigAccordion';
 
+import { ConfigVarType, ConfigVarValue, GameConfig, ConfigVariable } from '../../global/config/types';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -27,6 +28,31 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const [gameName, setGameName] = useState('');
     const [gameKey, setGameKey] = useState('');
     const [copyTooltipText, setCopyTooltipText] = useState('Copy to clipboard');
+
+    const mockConfig = {
+        variables: [
+            {
+                name: 'players_count',
+                type: ConfigVarType.INTEGER,
+                value: 0
+            },
+            {
+                name: 'whatever',
+                type: ConfigVarType.STRING,
+                value: ''
+            },
+            {
+                name: 'ecks_deee',
+                type: ConfigVarType.FLOAT,
+                value: 21.37
+            },
+            {
+                name: 'ecks_deee_2',
+                type: ConfigVarType.BOOLEAN,
+                value: true
+            }
+        ]
+    };
 
     const validateInputs = () => {
         return gameType && gameName;
@@ -122,7 +148,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     value={gameKey}
                 />
                 {
-                    gameType && <GameConfigAccordion gameType={gameType} />
+                    gameType && <GameConfigAccordion gameType={gameType} gameConfig={mockConfig} />
                 }
             </div>
         </Modal>

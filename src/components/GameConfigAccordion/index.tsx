@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -16,81 +16,76 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { ConfigVarType, ConfigVarValue } from '../../global/config/types';
+import { ConfigVarType, ConfigVarValue, GameConfig, ConfigVariable } from '../../global/config/types';
 import { NoIncrementInput, AccordionSummary } from './styled';
 import { capitalize } from '../../global/util/stringOperations';
 
-interface GameConfig {
-    variables: ConfigVariable[];
-}
 
-interface ConfigVariable {
-    name: string;
-    type: ConfigVarType;
-    value?: ConfigVarValue;
-}
 
+
+//note: check if we can pass copy of default config to component reliably or do we fetch data from the backend 
 interface Props {
     gameType: string;
+    gameConfig: GameConfig;
 }
 
-const GameConfigAccordion = ({ gameType }: Props) => {
+const GameConfigAccordion = ({ gameType, gameConfig }: Props) => {
 
     const formatVariableName = (varName: string) => {
         return capitalize(varName.split("_").join(" "));
     };
 
-    const setConfigVar = (name: string, value: ConfigVarValue) => { };
+    const setConfigVar = (name: string, value: ConfigVarValue) => {
+        //@ts-ignore
+        const configVar = getConfigVar(name);
+        if (configVar) {
+            configVar.value = value;
+        }
+        console.log(configVar);
+    };
 
-    const getInputForType = (varType: ConfigVarType) => {
+    const getConfigVar = (name: string) => {
+        return gameConfig.variables.find((variable: ConfigVariable) => variable.name === name);
+    }
+
+    const getInputFor = (configVar: ConfigVariable) => {
         let comp;
-        switch (varType) {
+        switch (configVar.type) {
             case ConfigVarType.BOOLEAN:
-                comp = <FormControlLabel control={<Checkbox />} label="Enabled" />
+                //@ts-ignore
+                comp = <FormControlLabel control={<Checkbox checked={configVar.value} onClick={() => setConfigVar(configVar.name, !configVar.value)} />} label="Enabled" />
                 break;
             case ConfigVarType.FLOAT:
-                comp = <NoIncrementInput inputProps={{ pattern: /-?[0-9]+\.[0-9]+/, maxLength: 20, type: 'number' }} placeholder="E.g. 0.01" variant="standard" />
+                comp = <NoIncrementInput
+                    //note: this is unoptimized as fuck; think about how we can improve on this design
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => setConfigVar(configVar.name, event.target.value)}
+                    defaultValue={configVar.value}
+                    inputProps={{ pattern: /-?[0-9]+\.[0-9]+/, maxLength: 20, type: 'number' }}
+                    placeholder="E.g. 0.01"
+                    variant="standard"
+                />;
                 break;
             case ConfigVarType.INTEGER:
-                comp = <NoIncrementInput inputProps={{ maxLength: 20, type: 'number' }} placeholder="E.g. 100" variant="standard" />
+                comp = <NoIncrementInput
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => setConfigVar(configVar.name, event.target.value)}
+                    defaultValue={configVar.value}
+                    inputProps={{ maxLength: 20, type: 'number' }}
+                    placeholder="E.g. 100"
+                    variant="standard"
+                />;
                 break;
             case ConfigVarType.STRING:
-                comp = <TextField placeholder="Type any text here..." variant="standard" inputProps={{ maxLength: 150 }} />
+                comp = <TextField
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => setConfigVar(configVar.name, event.target.value)}
+                    defaultValue={configVar.value}
+                    placeholder="Type any text here..."
+                    variant="standard"
+                    inputProps={{ maxLength: 150 }}
+                />;
                 break;
         };
         return comp;
     };
-
-
-    //note: after backend creates an endpoint to return game config then it should be moved to useEffect with useState
-    const configMock = {
-        variables: [
-            {
-                name: 'players_count',
-                type: ConfigVarType.INTEGER,
-                value: 0
-            },
-            {
-                name: 'whatever',
-                type: ConfigVarType.STRING,
-                value: ''
-            },
-            {
-                name: 'ecks_deee',
-                type: ConfigVarType.FLOAT,
-                value: 21.37
-            },
-            {
-                name: 'ecks_deee_2',
-                type: ConfigVarType.BOOLEAN,
-                value: true
-            }
-        ]
-    };
-
-    const [config, setConfig] = useState<GameConfig>({ variables: [] });
-
-    useEffect(() => { setConfig(configMock); }, []);
 
     return (
         <Accordion>
@@ -109,12 +104,12 @@ const GameConfigAccordion = ({ gameType }: Props) => {
                         </TableHead>
                         <TableBody>
                             {
-                                config.variables.map((variableData: ConfigVariable) => {
+                                gameConfig.variables.map((variableData: ConfigVariable) => {
                                     return (
                                         <TableRow>
                                             <TableCell>{formatVariableName(variableData.name)}</TableCell>
                                             {/* <TableCell>{variableData.type.toString()}</TableCell> */}
-                                            <TableCell>{getInputForType(variableData.type)}</TableCell>
+                                            <TableCell>{getInputFor(variableData)}</TableCell>
                                         </TableRow>
                                     );
                                 })

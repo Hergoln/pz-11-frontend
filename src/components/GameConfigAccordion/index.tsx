@@ -53,7 +53,7 @@ const GameConfigAccordion = ({ gameType, gameConfig }: Props) => {
             case ConfigVarType.BOOLEAN:
                 comp = <FormControlLabel
                     //@ts-ignore
-                    control={<Checkbox checked={configVar.value} onClick={() => setConfigVar(configVar.name, !configVar.value)} />}
+                    control={<Checkbox defaultChecked={configVar.value} onClick={() => setConfigVar(configVar.name, !configVar.value)} />}
                     label="Enabled"
                 />;
                 break;

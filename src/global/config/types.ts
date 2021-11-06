@@ -7,6 +7,11 @@ export enum ConfigVarType {
     BOOLEAN = 'bool'
 };
 
+const getConfigTypeForString = (s: string) => {
+    //@ts-ignore
+    return Object.keys(ConfigVarType).find((key: string) => ConfigVarType[key] === s);
+};
+
 interface GameConfig {
     variables: ConfigVariable[];
 }
@@ -20,5 +25,5 @@ interface ConfigVariable {
 type ConfigVarValue = number | boolean | string;
 
 
-
+export { getConfigTypeForString };
 export type { ConfigVarValue, ConfigVariable, GameConfig };

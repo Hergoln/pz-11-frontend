@@ -39,7 +39,6 @@ const GameConfigAccordion = ({ gameConfig }: Props) => {
         if (configVar) {
             configVar.value = value;
         }
-        console.log(configVar);
     };
 
     const getConfigVar = (name: string) => {

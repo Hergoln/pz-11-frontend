@@ -23,7 +23,6 @@ import { capitalize } from '../../global/util/stringOperations';
 
 
 
-//note: check if we can pass copy of default config to component reliably or do we fetch data from the backend 
 interface Props {
     gameType: string;
     gameConfig: GameConfig;
@@ -52,8 +51,11 @@ const GameConfigAccordion = ({ gameType, gameConfig }: Props) => {
         let comp;
         switch (configVar.type) {
             case ConfigVarType.BOOLEAN:
-                //@ts-ignore
-                comp = <FormControlLabel control={<Checkbox checked={configVar.value} onClick={() => setConfigVar(configVar.name, !configVar.value)} />} label="Enabled" />
+                comp = <FormControlLabel
+                    //@ts-ignore
+                    control={<Checkbox checked={configVar.value} onClick={() => setConfigVar(configVar.name, !configVar.value)} />}
+                    label="Enabled"
+                />;
                 break;
             case ConfigVarType.FLOAT:
                 comp = <NoIncrementInput
@@ -98,7 +100,6 @@ const GameConfigAccordion = ({ gameType, gameConfig }: Props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell align="left"><b>Variable</b></TableCell>
-                                {/* <TableCell align="left">Type</TableCell> */}
                                 <TableCell align="left"><b>Value</b></TableCell>
                             </TableRow>
                         </TableHead>
@@ -108,7 +109,6 @@ const GameConfigAccordion = ({ gameType, gameConfig }: Props) => {
                                     return (
                                         <TableRow>
                                             <TableCell>{formatVariableName(variableData.name)}</TableCell>
-                                            {/* <TableCell>{variableData.type.toString()}</TableCell> */}
                                             <TableCell>{getInputFor(variableData)}</TableCell>
                                         </TableRow>
                                     );

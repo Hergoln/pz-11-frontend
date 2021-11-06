@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent } from 'react';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -24,11 +24,10 @@ import { capitalize } from '../../global/util/stringOperations';
 
 
 interface Props {
-    gameType: string;
     gameConfig: GameConfig;
 }
 
-const GameConfigAccordion = ({ gameType, gameConfig }: Props) => {
+const GameConfigAccordion = ({ gameConfig }: Props) => {
 
     const formatVariableName = (varName: string) => {
         return capitalize(varName.split("_").join(" "));

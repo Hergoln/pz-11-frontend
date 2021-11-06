@@ -12,7 +12,7 @@ import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboa
 import ApiSelect from '../ApiSelect';
 import GameConfigAccordion from '../GameConfigAccordion';
 
-import { ConfigVarType, ConfigVarValue, GameConfig, ConfigVariable } from '../../global/config/types';
+import { ConfigVarType } from '../../global/config/types';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -148,7 +148,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     value={gameKey}
                 />
                 {
-                    gameType && <GameConfigAccordion gameType={gameType} gameConfig={mockConfig} />
+                    gameType && <GameConfigAccordion gameConfig={mockConfig} />
                 }
             </div>
         </Modal>

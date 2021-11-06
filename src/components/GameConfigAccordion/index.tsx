@@ -95,7 +95,7 @@ const GameConfigAccordion = ({ gameType, gameConfig }: Props) => {
                 <Typography>Game configuration</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <TableContainer>
+                <TableContainer style={{ overflow: 'auto', maxHeight: 350 }}>
                     <Table>
                         <TableHead>
                             <TableRow>

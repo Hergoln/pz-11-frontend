@@ -54,7 +54,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                     </Button>
                 </JoinGameFooterContainer>
             ]
-        } closable={false} {...modalProps}>
+        } closable={true} onCancel={onCancel} {...modalProps}>
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Input ongoing game ID to join</h2>
             <StyledGameIdInput onChange={handleChange} placeholder="Game key..." maxLength={50} />
         </Modal>

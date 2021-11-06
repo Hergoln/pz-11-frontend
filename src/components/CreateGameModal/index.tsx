@@ -107,7 +107,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     </Button>
                 </div>
             ]
-        } closable={true} maskClosable={true} {...modalProps}>
+        } closable={true} onCancel={onCancel} {...modalProps}>
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Copy code and share with your friends</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <TextField

@@ -10,7 +10,9 @@ import 'antd/dist/antd.css';
 
 import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboard.svg';
 import ApiSelect from '../ApiSelect';
+import GameConfigAccordion from '../GameConfigAccordion';
 
+import { ConfigVarType } from '../../global/config/types';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -26,6 +28,31 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const [gameName, setGameName] = useState('');
     const [gameKey, setGameKey] = useState('');
     const [copyTooltipText, setCopyTooltipText] = useState('Copy to clipboard');
+
+    const mockConfig = {
+        variables: [
+            {
+                name: 'players_count',
+                type: ConfigVarType.INTEGER,
+                value: 0
+            },
+            {
+                name: 'whatever',
+                type: ConfigVarType.STRING,
+                value: ''
+            },
+            {
+                name: 'ecks_deee',
+                type: ConfigVarType.FLOAT,
+                value: 21.37
+            },
+            {
+                name: 'ecks_deee_2',
+                type: ConfigVarType.BOOLEAN,
+                value: true
+            }
+        ]
+    };
 
     const validateInputs = () => {
         return gameType && gameName;
@@ -80,7 +107,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     </Button>
                 </div>
             ]
-        } closable={true} maskClosable={true} {...modalProps}>
+        } closable={true} onCancel={onCancel} {...modalProps}>
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Copy code and share with your friends</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <TextField
@@ -120,6 +147,9 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     variant="standard"
                     value={gameKey}
                 />
+                {
+                    gameType && <GameConfigAccordion gameConfig={mockConfig} />
+                }
             </div>
         </Modal>
     );

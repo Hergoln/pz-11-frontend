@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+//@ts-ignore
+import { Redirect } from 'react-router-dom';
 
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
@@ -11,6 +13,7 @@ import 'antd/dist/antd.css';
 import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboard.svg';
 import ApiSelect from '../ApiSelect';
 import GameConfigAccordion from '../GameConfigAccordion';
+
 
 import { ConfigVarType } from '../../global/config/types';
 
@@ -28,6 +31,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const [gameName, setGameName] = useState('');
     const [gameKey, setGameKey] = useState('');
     const [copyTooltipText, setCopyTooltipText] = useState('Copy to clipboard');
+    const [redirect, setRedirect] = useState(false);
 
     const mockConfig = {
         variables: [
@@ -92,7 +96,9 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     };
 
     const handleJoinGame = async () => {
-
+        if (redirect) return;
+        //todo: add api call here to verify if game id is correct
+        setRedirect(true);
     };
 
     return (
@@ -108,6 +114,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                 </div>
             ]
         } closable={true} onCancel={onCancel} {...modalProps}>
+            {redirect && <Redirect to={`/${gameType.toLowerCase()}`} />}
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Copy code and share with your friends</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <TextField

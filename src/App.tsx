@@ -9,6 +9,7 @@ import { WebsocketHandler } from './components/WebsocketHandler';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import AgarntPage from './pages/game-pages/AgarntPage';
 
 function messageHandler(event: IMessageEvent) {
   console.log("got a message: " + event.data);
@@ -33,6 +34,7 @@ function App() {
             <Switch>
               <Route exact path='/' component={MainPage} />
               <Route exact path='/infopage/' component={InfoPage} />
+              <Route exact path='/agarnt/' component={AgarntPage} />
             </Switch>
           </Router>
         </div>

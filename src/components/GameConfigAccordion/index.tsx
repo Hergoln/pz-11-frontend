@@ -103,9 +103,9 @@ const GameConfigAccordion = ({ gameConfig }: Props) => {
                         </TableHead>
                         <TableBody>
                             {
-                                gameConfig.variables.map((variableData: ConfigVariable) => {
+                                gameConfig.variables.map((variableData: ConfigVariable, index: number) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={index}>
                                             <TableCell>{formatVariableName(variableData.name)}</TableCell>
                                             <TableCell>{getInputFor(variableData)}</TableCell>
                                         </TableRow>

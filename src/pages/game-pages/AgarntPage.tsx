@@ -2,6 +2,7 @@ import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { WebsocketHandler } from '../../components/WebsocketHandler';
 import Circle from '../../components/threejs/Circle';
+import AgarntPlayer from '../../players/AgarntPlayer';
 
 function AgarntPage() {
 
@@ -18,7 +19,7 @@ function AgarntPage() {
     return (
         <Canvas>
             <ambientLight />
-            <Circle position={[1, 1, 0]} />
+            <AgarntPlayer />
         </Canvas>
     );
 };

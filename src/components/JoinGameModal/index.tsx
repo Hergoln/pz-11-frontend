@@ -1,4 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
+//@ts-ignore
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Button, Modal } from 'antd';
@@ -17,6 +19,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [canJoin, setCanJoin] = useState(false);
     const [gameId, setGameId] = useState('');
+    const [redirect, setRedirect] = useState(false);
 
     const handleJoinGame = async () => {
         setIsLoading(true);
@@ -24,8 +27,8 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
         axios.put(`${baseUrl}/games/${gameId}`).then(response => {
             toast.success("Game found! You will soon be redirected...");
             setTimeout(() => {
-                //redirect user to another page here, passing required data (such as game ID etc.) along
-            }, 2000);
+                setRedirect(true); //todo: ask backend nicely to return game type so we can redirect to target page
+            }, 1000);
         }).catch(_err => {
             toast.error("Cannot join game. It seems like the server is not responding or the game ID is not valid");
         });
@@ -55,6 +58,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                 </JoinGameFooterContainer>
             ]
         } closable={true} onCancel={onCancel} {...modalProps}>
+            {redirect && <Redirect to={``} /> /*todo: fetch this from backend and pass it here (useState is a must here)*/}
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Input ongoing game ID to join</h2>
             <StyledGameIdInput onChange={handleChange} placeholder="Game key..." maxLength={50} />
         </Modal>

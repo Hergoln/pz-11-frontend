@@ -27,7 +27,7 @@ function App() {
   return (
     <>
       <ToastContainer autoClose={5000} position="top-right" />
-      <div className="page-container">
+      <div className="page-container" style={{ height: '100%' }}>
         {/* <WebsocketHandler gameId={''} onMessageReceived={messageHandler} onConnectionClosed={closeHandler} onError={errorHandler} /> */}
         <div className='content'>
           <Router>

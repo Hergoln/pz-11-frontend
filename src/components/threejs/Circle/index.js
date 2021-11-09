@@ -2,11 +2,13 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 
 
-const Circle = React.forwardRef((props, ref) => (
-    <mesh {...props} ref={ref}>
-        <circleGeometry radius={props.radius} segments={props.segments} />
-        <meshStandardMaterial color={props.color} />
-    </mesh>
-));
+const Circle = React.forwardRef(({ color, args, ...props }, ref) => {
+    return (
+        <mesh {...props} ref={ref}>
+            <circleGeometry args={args} attach="geometry" />
+            <meshStandardMaterial color={color} attach="material" />
+        </mesh>
+    )
+});
 
 export default Circle;

@@ -12,14 +12,22 @@ function AgarntPage() {
     //todo: use physics to move the circle around
     //todo: make circle more r o u n d
     //todo: increase canvas size to fit window size
-    //todo: Circle should be just a shape, player should have its own circle (with updated positions through the keyboard listener)
     //todo: create a player movement vector (and set its directions on keyboard key press)
 
+    const canvasRef = useRef();
+
+    useEffect(() => {
+        //@ts-ignore
+        canvasRef.current.width = window.innerWidth;
+        //@ts-ignore
+        canvasRef.current.height = window.innerHeight;
+    });
 
     return (
-        <Canvas>
+        //@ts-ignore
+        <Canvas ref={canvasRef} orthographic camera={{ zoom: 50, position: [0, 0, 100] }}>
             <ambientLight />
-            <AgarntPlayer />
+            <AgarntPlayer color={'blue'} />
         </Canvas>
     );
 };

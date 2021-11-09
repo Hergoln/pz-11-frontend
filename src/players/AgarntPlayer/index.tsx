@@ -1,44 +1,79 @@
-import React, { useRef, useEffect, KeyboardEvent } from 'react';
+//@ts-nocheck
+import React, { useRef, useEffect, useState, KeyboardEvent } from 'react';
+import { useThree, useFrame } from '@react-three/fiber';
 import Circle from '../../components/threejs/Circle';
 
-const AgarntPlayer = () => {
+interface PlayerProps {
+    color: string;
+}
+
+const START_RADIUS = 0.2;
+
+const AgarntPlayer = ({ color }: PlayerProps) => {
     const circleRef = useRef();
 
-    const step = 0.2;
+    const { camera } = useThree();
+    const [moveDirection, setMoveDirection] = useState([0, 0]);
+    const [radius, setRadius] = useState(START_RADIUS);
 
-    //@ts-ignore
+    //todo: create a function calculating speed in relation to radius
+    const speed = 5;
+
     function moveCircle(event: KeyboardEvent) {
         switch (event.key) {
             case 'w':
-                //@ts-ignore
-                circleRef.current.position.y += step
+                setMoveDirection([moveDirection[0], 1]);
                 break;
             case 's':
-                //@ts-ignore
-                circleRef.current.position.y += -step
+                setMoveDirection([moveDirection[0], -1])
                 break;
             case 'a':
-                //@ts-ignore
-                circleRef.current.position.x += -step
+                setMoveDirection([-1, moveDirection[1]])
                 break;
             case 'd':
-                //@ts-ignore
-                circleRef.current.position.x += step
+                setMoveDirection([1, moveDirection[1]])
+                break;
+        }
+    }
+
+    function clearMoveDirection(event: KeyboardEvent) {
+        switch (event.key) {
+            case 'w':
+                setMoveDirection([moveDirection[0], 0]);
+                break;
+            case 's':
+                setMoveDirection([moveDirection[0], 0])
+                break;
+            case 'a':
+                setMoveDirection([0, moveDirection[1]])
+                break;
+            case 'd':
+                setMoveDirection([0, moveDirection[1]])
                 break;
         }
     }
 
     useEffect(() => {
-        //@ts-ignore
         document.addEventListener('keydown', moveCircle);
+        document.addEventListener('keyup', clearMoveDirection);
         return () => {
-            //@ts-ignore
             document.removeEventListener('keydown', moveCircle);
+            document.removeEventListener('keyup', clearMoveDirection);
         };
     });
 
-    //@ts-ignore
-    return <Circle radius={32} color={'red'} segments={32} ref={circleRef} />;
+    useFrame((state, delta) => {
+        const translateX = moveDirection[0] * delta * speed;
+        const translateY = moveDirection[1] * delta * speed;
+        circleRef.current.translateX(translateX);
+        circleRef.current.translateY(translateY);
+        //todo: remake this to use lerp maybe?
+        const z = camera.position.z;
+        const pos = camera.position.lerpVectors(camera.position, circleRef.current.position, 0.25);
+        pos.z = z;
+    });
+
+    return <Circle color={'blue'} args={[radius, 32]} ref={circleRef} />;
 };
 
 export default AgarntPlayer;

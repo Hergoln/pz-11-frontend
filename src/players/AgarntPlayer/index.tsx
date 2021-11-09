@@ -1,6 +1,7 @@
 //@ts-nocheck
-import React, { useRef, useEffect, useState, KeyboardEvent } from 'react';
-import { useThree, useFrame } from '@react-three/fiber';
+import React, { useRef, useEffect, useState, useMemo, KeyboardEvent } from 'react';
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min';
+import { useThree, useFrame, use } from '@react-three/fiber';
 import Circle from '../../components/threejs/Circle';
 
 interface PlayerProps {
@@ -12,7 +13,14 @@ const START_RADIUS = 0.2;
 const AgarntPlayer = ({ color }: PlayerProps) => {
     const circleRef = useRef();
 
+
     const { camera } = useThree();
+
+    const cameraSmoothTween = useMemo(() => {
+        console.log("henlo");
+        return new TWEEN.Tween(camera.position);
+    }, [camera]);
+
     const [moveDirection, setMoveDirection] = useState([0, 0]);
     const [radius, setRadius] = useState(START_RADIUS);
 
@@ -63,17 +71,22 @@ const AgarntPlayer = ({ color }: PlayerProps) => {
     });
 
     useFrame((state, delta) => {
+        TWEEN.update();
         const translateX = moveDirection[0] * delta * speed;
         const translateY = moveDirection[1] * delta * speed;
         circleRef.current.translateX(translateX);
         circleRef.current.translateY(translateY);
-        //todo: remake this to use lerp maybe?
-        const z = camera.position.z;
-        const pos = camera.position.lerpVectors(camera.position, circleRef.current.position, 0.25);
-        pos.z = z;
+        cameraSmoothTween.to(
+            {
+                x: circleRef.current.position.x,
+                y: circleRef.current.position.y,
+                z: camera.position.z
+            }, 250).
+            easing(TWEEN.Easing.Cubic.Out).
+            start();
     });
 
-    return <Circle color={'blue'} args={[radius, 32]} ref={circleRef} />;
+    return <Circle color={color} args={[radius, 32]} ref={circleRef} />;
 };
 
 export default AgarntPlayer;

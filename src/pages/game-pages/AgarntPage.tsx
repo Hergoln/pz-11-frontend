@@ -25,7 +25,7 @@ function AgarntPage() {
 
     return (
         //@ts-ignore
-        <Canvas ref={canvasRef} orthographic camera={{ zoom: 50, position: [0, 0, 100] }}>
+        <Canvas ref={canvasRef} orthographic camera={{ zoom: 100, position: [0, 0, 100] }}>
             <ambientLight />
             <AgarntPlayer color={'blue'} />
         </Canvas>

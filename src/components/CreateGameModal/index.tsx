@@ -80,23 +80,24 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
 
         setIsLoading(true);
         const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}/games/`;
-        await axios.post(requestUrl, {
+        const response = await axios.post(requestUrl, {
             type: gameType,
-            name: gameName
-        }).then((response) => {
-            /*
-                response structure:
-                id - uuid
-                name - game name - string
-                type - game type - string
-            */
+            name: gameName,
+        });
+        if (response.status == StatusCodes.CREATED) {
             //@ts-ignore
             setGameKey(response.data.id);
             toast.success(`Game created successfully! Check a textfield on the bottom for the game id!`);
             setGameCreated(true);
-        }).catch(err => {
-            toast.error("Server made a fucky wucky uwu: " + err.toString());
-        });
+        } else {
+            toast.error("Server made a fucky wucky UwU");
+        }
+        /*
+            response structure:
+            id - uuid
+            name - game name - string
+            type - game type - string
+        */
         setIsLoading(false);
     };
 

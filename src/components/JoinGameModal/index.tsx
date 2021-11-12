@@ -22,14 +22,16 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const [gameId, setGameId] = useState('');
     const [playerName, setPlayerName] = useState('');
     const [redirect, setRedirect] = useState(false);
+    const [gameType, setGameType] = useState('');
 
     const handleJoinGame = async () => {
         setIsLoading(true);
-        const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
+        const response = await axios.put(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
         if (response.status == StatusCodes.OK) {
             toast.success("Game key correct! Redirecting...");
             setRedirect(true); //todo: ask backend nicely to return game type so we can redirect to target page
             //todo: add game key and player name to local storage
+            //todo: use setGameType here to set game type received from BE
         } else {
             toast.error("Sorry but the supplied game key doesn't match any of the games.");
         }
@@ -66,7 +68,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                 </JoinGameFooterContainer>
             ]
         } closable={true} onCancel={onCancel} {...modalProps}>
-            {redirect && <Redirect to={``} /> /*todo: fetch this from backend and pass it here (useState is a must here)*/}
+            {redirect && <Redirect to={`/${gameType.toLowerCase()}`} /> /*todo: fetch this from backend and pass it here (useState is a must here)*/}
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Input ongoing game ID to join</h2>
             <InputsParent>
                 <StyledPlayerNameInput onChange={handlePlayerNameChange} placeholder="Player name..." maxLength={35} />

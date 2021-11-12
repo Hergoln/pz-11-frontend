@@ -84,7 +84,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             type: gameType,
             name: gameName,
         });
-        if (response.status == StatusCodes.CREATED) {
+        if (response.status == StatusCodes.OK) {
             //@ts-ignore
             setGameKey(response.data.id);
             toast.success(`Game created successfully! Check a textfield on the bottom for the game id!`);
@@ -103,9 +103,9 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
 
     const handleJoinGame = async () => {
         if (redirect) return;
-        const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`);
+        const response = await axios.put(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`);
         if (response.status == StatusCodes.OK) {
-            toast.info("Game key correct! Redirecting...");
+            toast.info("Game key correct! Redirecting...", { autoClose: 500 });
             //todo: store player name and game session key in local storage
             setRedirect(true);
         } else {

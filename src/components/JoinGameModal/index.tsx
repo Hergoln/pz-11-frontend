@@ -3,11 +3,12 @@ import React, { ChangeEvent, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Button, Modal } from 'antd';
+import { Button, Input, Modal } from 'antd';
 
 import 'antd/dist/antd.css';
 
-import { JoinGameFooterContainer, StyledGameIdInput } from './styled';
+import { JoinGameFooterContainer, StyledGameIdInput, StyledPlayerNameInput, InputsParent } from './styled';
+import { StatusCodes } from 'http-status-codes';
 
 interface Props {
     onCancel?: () => void;
@@ -19,30 +20,37 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [canJoin, setCanJoin] = useState(false);
     const [gameId, setGameId] = useState('');
+    const [playerName, setPlayerName] = useState('');
     const [redirect, setRedirect] = useState(false);
 
     const handleJoinGame = async () => {
         setIsLoading(true);
-        const baseUrl = process.env.REACT_APP_API_SERVER_URL;
-        axios.put(`${baseUrl}/games/${gameId}`).then(response => {
-            toast.success("Game found! You will soon be redirected...");
-            setTimeout(() => {
-                setRedirect(true); //todo: ask backend nicely to return game type so we can redirect to target page
-            }, 1000);
-        }).catch(_err => {
-            toast.error("Cannot join game. It seems like the server is not responding or the game ID is not valid");
-        });
+        const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
+        if (response.status == StatusCodes.OK) {
+            toast.success("Game key correct! Redirecting...");
+            setRedirect(true); //todo: ask backend nicely to return game type so we can redirect to target page
+            //todo: add game key and player name to local storage
+        } else {
+            toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        }
         setIsLoading(false);
     };
 
     //@ts-ignore
-    const canPlayerJoinGame = (event: ChangeEvent<HTMLInputElement>) => setCanJoin(event.target && event.target.value.length > 0);
+    const canPlayerJoinGame = (event: ChangeEvent<HTMLInputElement>) => setCanJoin(playerName && gameId);
     //@ts-ignore
     const updateGameId = (event: ChangeEvent<HTMLInputElement>) => setGameId(event.target.value);
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const updatePlayerName = (event: ChangeEvent<HTMLInputElement>) => setPlayerName(event.target.value);
+
+    const handleGameKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
         canPlayerJoinGame(event);
         updateGameId(event);
+    };
+
+    const handlePlayerNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        canPlayerJoinGame(event);
+        updatePlayerName(event);
     };
 
     return (
@@ -60,7 +68,10 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
         } closable={true} onCancel={onCancel} {...modalProps}>
             {redirect && <Redirect to={``} /> /*todo: fetch this from backend and pass it here (useState is a must here)*/}
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Input ongoing game ID to join</h2>
-            <StyledGameIdInput onChange={handleChange} placeholder="Game key..." maxLength={50} />
+            <InputsParent>
+                <StyledPlayerNameInput onChange={handlePlayerNameChange} placeholder="Player name..." maxLength={35} />
+                <StyledGameIdInput onChange={handleGameKeyChange} placeholder="Game key..." maxLength={50} />
+            </InputsParent>
         </Modal>
     );
 };

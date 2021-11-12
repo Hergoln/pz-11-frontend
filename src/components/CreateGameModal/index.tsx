@@ -7,6 +7,8 @@ import { Redirect } from 'react-router-dom';
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
 
+import { StatusCodes } from 'http-status-codes';
+
 import { Button, Modal } from 'antd';
 import 'antd/dist/antd.css';
 
@@ -100,9 +102,14 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
 
     const handleJoinGame = async () => {
         if (redirect) return;
-        //todo: add api call here to verify if game id is correct
-        const body = {};
-        setRedirect(true);
+        const response = await axios.post(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`);
+        if (response.status == StatusCodes.OK) {
+            toast.info("Game key correct! Redirecting...");
+            //todo: store player name and game session key in local storage
+            setRedirect(true);
+        } else {
+            toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        }
     };
 
     const topInputProps = gameCreated ? {

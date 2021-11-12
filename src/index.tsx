@@ -7,6 +7,17 @@ import reportWebVitals from './reportWebVitals';
 
 import './index.css';
 
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      //@ts-ignore
+      NODE_ENV: 'development' | 'production' | 'test';
+      REACT_APP_WEBSOCKET_SERVER_URL: string;
+      REACT_APP_API_SERVER_URL: string;
+    }
+  }
+}
+
 //@ts-ignore
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 

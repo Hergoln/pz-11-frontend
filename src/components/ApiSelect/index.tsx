@@ -16,7 +16,6 @@ interface ApiSelectProps {
 const ApiSelect = ({ resourceEndpoint, displayNameExtractor, onSelect, style, checkThroughKeys, ...selectProps }: ApiSelectProps) => {
 
     const [options, setOptions] = useState([]);
-    const [mounted, setMounted] = useState(true);
 
     const digThrough = (data: object, keys: Array<string>) => {
         let val = data;
@@ -27,18 +26,16 @@ const ApiSelect = ({ resourceEndpoint, displayNameExtractor, onSelect, style, ch
         return val;
     };
 
+    const resourceGetter = async (resourceEndpoint: string, checkThroughKeys: string[]) => {
+        const response = await axios.get(resourceEndpoint);
+        //@ts-ignore
+        setOptions(checkThroughKeys ? digThrough(response.data, checkThroughKeys) : response.data);
+    };
+
     useEffect(() => {
-        if (mounted) {
-            axios.get(resourceEndpoint).then(response => {
-                if (mounted) {
-                    //@ts-ignore
-                    setOptions(checkThroughKeys ? digThrough(response.data, checkThroughKeys) : response.data); //note: this should be changed to use spread operator (...) when the api data starts returning an array
-                }
-            });
-        }
-        setMounted(true);
-        return () => setMounted(false);
-    }, [resourceEndpoint, checkThroughKeys])
+        //@ts-ignore
+        resourceGetter(resourceEndpoint, checkThroughKeys);
+    }, [])
 
 
     return (

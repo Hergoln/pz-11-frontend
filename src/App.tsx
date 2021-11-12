@@ -32,9 +32,9 @@ function App() {
         <div className='content'>
           <Router>
             <Switch>
-              <Route exact path='/' component={MainPage} />
               <Route exact path='/infopage/' component={InfoPage} />
               <Route exact path='/agarnt/' component={AgarntPage} />
+              <Route exact path='/' component={MainPage} />
             </Switch>
           </Router>
         </div>

@@ -81,7 +81,7 @@ const AgarntPlayer = ({ color }: PlayerProps) => {
                 x: circleRef.current.position.x,
                 y: circleRef.current.position.y,
                 z: camera.position.z
-            }, 250).
+            }, 100).
             easing(TWEEN.Easing.Cubic.Out).
             start();
     });

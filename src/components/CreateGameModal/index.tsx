@@ -31,6 +31,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const [gameType, setGameType] = useState('');
     const [gameName, setGameName] = useState('');
     const [gameKey, setGameKey] = useState('');
+    const [playerName, setPlayerName] = useState('');
     const [copyTooltipText, setCopyTooltipText] = useState('Copy to clipboard');
     const [redirect, setRedirect] = useState(false);
 
@@ -59,7 +60,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         ]
     };
 
-    const validateInputs = () => {
+    const validateCreateGameInputs = () => {
         return gameType && gameName;
     };
 
@@ -69,8 +70,9 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     };
 
     const handleCreateGame = async () => {
-        if (!validateInputs()) {
+        if (!validateCreateGameInputs()) {
             toast.warning("It seems like your input game data is incorrect. Please check it and try again.");
+            console.log(gameType, gameName);
             return;
         }
 
@@ -99,7 +101,20 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const handleJoinGame = async () => {
         if (redirect) return;
         //todo: add api call here to verify if game id is correct
+        const body = {};
         setRedirect(true);
+    };
+
+    const topInputProps = gameCreated ? {
+        onChange: (event: ChangeEvent<HTMLInputElement>) => setPlayerName(event.target.value),
+        placeholder: "Player name...",
+        label: "Player name",
+        value: playerName,
+    } : {
+        onChange: (event: ChangeEvent<HTMLInputElement>) => setGameName(event.target.value),
+        placeholder: "Game session name...",
+        label: "Game session name",
+        value: gameName,
     };
 
     return (
@@ -119,11 +134,10 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Copy code and share with your friends</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <TextField
-                    placeholder="Game session name..."
-                    label="Game session name"
                     variant="standard"
                     required={true}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => setGameName(event.target.value)}
+                    inputProps={{ maxLength: 35 }}
+                    {...topInputProps}
                 />
                 <ApiSelect
                     resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}/games/types/`}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { w3cwebsocket as Websocket, IMessageEvent, ICloseEvent } from 'websocket';
 
+//todo: add separate handlers for broadcasts (game state data) and for actual player <-> server communication
+
 interface WebsocketProps {
     gameId: string;
     onMessageReceived: (event: IMessageEvent) => void;

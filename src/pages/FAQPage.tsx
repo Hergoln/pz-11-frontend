@@ -21,6 +21,7 @@ class FAQPage extends Component {
         ...theme.typography.body2,
         padding: theme.spacing(1),
         textAlign: 'center',
+        backgroundColor: '#F7F7F7',
         color: theme.palette.text.secondary,
     }));
 
@@ -37,7 +38,7 @@ class FAQPage extends Component {
                     
                 <Grid container spacing={5} justifyContent="center" style={{ paddingBottom: 30, paddingTop: 30}}>
                     <Grid item xs={3} >
-                        <img src="https://cdn.pixabay.com/photo/2020/07/28/18/55/man-5445948_960_720.png" alt="Question" width="100%"/>
+                        <img src="https://images.pexels.com/photos/3683053/pexels-photo-3683053.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260" alt="Question" width="100%"/>
                     </Grid>
                     <Grid item xs={9} >
                         <Accordion>
@@ -52,6 +53,8 @@ class FAQPage extends Component {
                             </AccordionDetails>
                         </Accordion>
 
+                        <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
+
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon style={{color: '#7DCFB6'}}/>} aria-controls="panel2a-content" id="panel2a-header">
                             <Typography>What algorithm is best suited to create bots?</Typography>
@@ -64,16 +67,21 @@ class FAQPage extends Component {
                             </AccordionDetails>
                         </Accordion>
 
+                        <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
+
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon style={{color: '#FBD1A2'}}/>} aria-controls="panel2a-content" id="panel2a-header">
                             <Typography> Will AI take over the world some day? </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                             <Typography>
-                                Yeah, you wish.
+                                Maaaan I wish.
                             </Typography>
+                            <img src="https://memegenerator.net/img/images/300x300/14050504.jpg" alt="End" width="100%"/>
                             </AccordionDetails>
                         </Accordion>
+
+                        <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon style={{color: '#F79256'}}/>} aria-controls="panel2a-content" id="panel2a-header">
@@ -85,6 +93,8 @@ class FAQPage extends Component {
                             </Typography>
                             </AccordionDetails>
                         </Accordion>
+
+                        <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
                     
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon style={{color: '#FBD1A2'}}/>} aria-controls="panel2a-content" id="panel2a-header">
@@ -98,6 +108,20 @@ class FAQPage extends Component {
                                     <li> Go to the corner of your room and cry yourself to sleep (recommended)</li>
                                 </ul>
                             </Typography>
+                            </AccordionDetails>
+                        </Accordion>
+
+                        <Divider variant="middle" style={{ paddingBottom: 5, paddingTop: 10}} />
+
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon style={{color: '#7DCFB6'}}/>} aria-controls="panel2a-content" id="panel2a-header">
+                            <Typography> Will AI steal my job? </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                            <Typography>
+                                Yeah, probably.
+                            </Typography>
+                            <img src="https://i.pinimg.com/originals/73/8e/10/738e10a9c02eb209fe63222b1582ceb0.jpg" alt="End" width="100%"/>
                             </AccordionDetails>
                         </Accordion>
                     </Grid>

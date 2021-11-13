@@ -19,12 +19,6 @@ class MainPage extends Component {
         createGameModalVisible: false
     };
 
-    styles = {
-        paperContainer: {
-            backgroundColor: '#F7F7F7'        
-        }
-    };
-
     actions = [
         { icon: <AccountCircle />, name: 'Account' },
         { icon: <Analytics />, name: 'Statistics' },
@@ -45,7 +39,6 @@ class MainPage extends Component {
             <CssBaseline />
                 <Menu />
                 
-                <Paper style={this.styles.paperContainer}>
                 <main>
                 <Container sx={{ py: 5, px: 20 }} maxWidth='xl'>
 
@@ -137,7 +130,6 @@ class MainPage extends Component {
 
                 </Container>
                 </main>
-                </Paper>
             </ThemeProvider>
         );
     }

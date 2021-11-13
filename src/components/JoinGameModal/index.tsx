@@ -26,16 +26,18 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
 
     const handleJoinGame = async () => {
         setIsLoading(true);
-        const response = await axios.put(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
-        if (response.status == StatusCodes.OK) {
-            toast.success("Game key correct! Redirecting...");
-            setRedirect(true); //todo: ask backend nicely to return game type so we can redirect to target page
-            //todo: add game key and player name to local storage
-            //todo: use setGameType here to set game type received from BE
-        } else {
-            toast.error("Sorry but the supplied game key doesn't match any of the games.");
-        }
-        setIsLoading(false);
+        // const response = await axios.put(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
+        toast.success("Game key correct! Redirecting...", { autoClose: 500 });
+        localStorage.setItem('player-name', playerName);
+        localStorage.setItem('agarnt-game-key', gameId);
+        setRedirect(true); //todo: ask backend nicely to return game type so we can redirect to target page
+        // if (response.status == StatusCodes.OK) {
+        //     //todo: add game key and player name to local storage
+        //     //todo: use setGameType here to set game type received from BE
+        // } else {
+        //     toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        // }
+        // setIsLoading(false);
     };
 
     //@ts-ignore
@@ -68,7 +70,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                 </JoinGameFooterContainer>
             ]
         } closable={true} onCancel={onCancel} {...modalProps}>
-            {redirect && <Redirect to={`/${gameType.toLowerCase()}`} /> /*todo: fetch this from backend and pass it here (useState is a must here)*/}
+            {redirect && <Redirect to={`/agarnt`} /> /*todo: fetch this from backend and pass it here (useState is a must here)*/}
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Input ongoing game ID to join</h2>
             <InputsParent>
                 <StyledPlayerNameInput onChange={handlePlayerNameChange} placeholder="Player name..." maxLength={35} />

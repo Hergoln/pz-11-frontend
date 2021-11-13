@@ -12,7 +12,7 @@ declare global {
     interface ProcessEnv {
       //@ts-ignore
       NODE_ENV: 'development' | 'production' | 'test';
-      REACT_APP_WEBSOCKET_SERVER_URL: string;
+      REACT_APP_API_WEBSOCKET_SERVER_URL: string;
       REACT_APP_API_SERVER_URL: string;
     }
   }

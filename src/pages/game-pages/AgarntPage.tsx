@@ -3,16 +3,29 @@ import { Canvas, RenderCallback, useFrame, useThree } from '@react-three/fiber';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import Circle from '../../components/threejs/Circle';
 import AgarntPlayer from '../../players/AgarntPlayer';
-import { AgarntPlayerState, INITIAL_STATE } from '../../global/game-states/agarnt';
+import { AgarntPlayerState, INITIAL_STATE, Food } from '../../global/game-states/agarnt';
+
+interface InputMap {
+    UP: boolean;
+    DOWN: boolean;
+    LEFT: boolean;
+    RIGHT: boolean;
+}
 
 function AgarntPage() {
 
     //todo: use physics to move the circle around
 
+    const FOOD_RADIUS = 0.1;
+
     const canvasRef = useRef();
     const [gameState, setGameState] = useState(INITIAL_STATE);
-    const [moveDirection, setMoveDirection] = useState([0, 0]);
-    const [playerPosition, setPlayerPosition] = useState([0, 0, 0]); //todo: randomize this shit
+    const [currentInput, setCurrentInput] = useState<InputMap>({
+        UP: false,
+        DOWN: false,
+        LEFT: false,
+        RIGHT: false,
+    });
 
     const playerColor = useMemo(() => getRandomColor(), []);
 
@@ -33,49 +46,62 @@ function AgarntPage() {
         document.removeEventListener('keyup', handleAgarntKeyUp);
     }
 
-    //note: this is a temporary useEffect to check if everything works correctly with inputs
-    useEffect(() => {
-        //@ts-ignore
-        initGameListeners(null);
-        //@ts-ignore
-        return () => cleanupGameListeners(null);
-    });
-
     function handleGameMessage(event: WebSocketEventMap['message']) {
-        const newState = JSON.parse(event.data);
-        setGameState(newState);
+        if (event.data.error) {
+            console.log("server made a fucky wucky");
+        } else {
+            // console.log("response" + event.data.toString());
+            const newState = JSON.parse(event.data);
+            setGameState(newState);
+        }
     }
 
     function handleAgarntKeyDown(event: KeyboardEvent) {
+        //@ts-ignore
         switch (event.key) {
             case 'w':
-                setMoveDirection([moveDirection[0], 1]);
+            case 'ArrowUp':
+                currentInput.UP = true;
                 break;
+
             case 's':
-                setMoveDirection([moveDirection[0], -1])
+            case 'ArrowDown':
+                currentInput.DOWN = true;
                 break;
-            case 'a':
-                setMoveDirection([-1, moveDirection[1]])
-                break;
+
             case 'd':
-                setMoveDirection([1, moveDirection[1]])
+            case 'ArrowRight':
+                currentInput.RIGHT = true;
+                break;
+
+            case 'a':
+            case 'ArrowLeft':
+                currentInput.LEFT = true;
                 break;
         }
     }
 
     function handleAgarntKeyUp(event: KeyboardEvent) {
+        //@ts-ignore
         switch (event.key) {
             case 'w':
-                setMoveDirection([moveDirection[0], 0]);
+            case 'ArrowUp':
+                currentInput.UP = false;
                 break;
+
             case 's':
-                setMoveDirection([moveDirection[0], 0])
+            case 'ArrowDown':
+                currentInput.DOWN = false;
                 break;
-            case 'a':
-                setMoveDirection([0, moveDirection[1]])
-                break;
+
             case 'd':
-                setMoveDirection([0, moveDirection[1]])
+            case 'ArrowRight':
+                currentInput.RIGHT = false;
+                break;
+
+            case 'a':
+            case 'ArrowLeft':
+                currentInput.LEFT = false;
                 break;
         }
     }
@@ -94,17 +120,22 @@ function AgarntPage() {
         onError: (event: WebSocketEventMap['error']) => console.log("server made a fucky wucky UwU")
     };
 
-    // const {
-    //     sendMessage,
-    //     sendJsonMessage,
-    //     readyState,
-    // } = useWebSocket(process.env.REACT_APP_WEBSOCKET_SERVER_URL, websocketOptions);
+    const gameSessionId = localStorage.getItem("agarnt-game-key");
+    const currentPlayerName = localStorage.getItem("player-name");
 
-    const playerRenderFunc: RenderCallback = (_state, delta) => {
-        const speed = 5;
-        const translateX = moveDirection[0] * delta * speed;
-        const translateY = moveDirection[1] * delta * speed;
-        setPlayerPosition([playerPosition[0] + translateX, playerPosition[1] + translateY, playerPosition[2]]);
+    //@ts-ignore
+    const websocketUrl = `${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(currentPlayerName)}`
+
+    const {
+        sendMessage,
+    } = useWebSocket(websocketUrl, websocketOptions);
+
+    const playerRenderFunc: RenderCallback = (_state, _delta) => {
+        const message = JSON.stringify({
+            directions: currentInput,
+        });
+        sendMessage(message);
+        // console.log(gameState.player.x, gameState.player.y)
     };
 
     return (
@@ -112,19 +143,20 @@ function AgarntPage() {
         <Canvas ref={canvasRef} orthographic camera={{ zoom: 100, position: [0, 0, 100] }}>
             <ambientLight />
             {/* pass position and other stuff here, move it from agarnt player  */}
-            <AgarntPlayer color={playerColor} position={playerPosition} frameCallback={playerRenderFunc} />
+            <AgarntPlayer color={playerColor} position={[gameState.player.x, gameState.player.y, 0]} currentRadius={gameState.player.radius} frameCallback={playerRenderFunc} />
             {
                 /* here we will render all of the other players */
-                gameState.players.map((player: AgarntPlayerState) => {
+                gameState.players.map((player: AgarntPlayerState, index: number) => {
                     //@ts-ignore
-                    return <Circle color={getRandomColor()} args={[player.radius, 32]} position={[player.x, player.y, 0]} />;
+                    return <Circle key={index} color={getRandomColor()} args={[player.radius, 32]} position={[player.x, player.y, 0]} />;
                 })
             }
             {
                 /*and here will be foods*/
-                gameState.foods.map((food: { x: number, y: number }) => {
+                gameState.food.map((food: Food, index: number) => {
+                    //todo: make agarnt player without camera that assigns its own color inside (to stop color flickering)
                     //@ts-ignore
-                    return <Circle color={getRandomColor()} args={[0.05, 32]} position={[food.x, food.y, 0]} />;
+                    return <Circle key={index} color={'red'} args={[FOOD_RADIUS, 32]} position={[food[0], food[1], 0]} />;
                 })
             }
         </Canvas>

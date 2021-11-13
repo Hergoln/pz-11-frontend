@@ -18,6 +18,7 @@ import GameConfigAccordion from '../GameConfigAccordion';
 
 
 import { ConfigVarType } from '../../global/config/types';
+import { capitalize } from '../../global/util/stringOperations';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -81,12 +82,12 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         setIsLoading(true);
         const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}/games/`;
         const response = await axios.post(requestUrl, {
-            type: gameType,
+            type: gameType.toLowerCase(),
             name: gameName,
         });
         if (response.status == StatusCodes.OK) {
             //@ts-ignore
-            setGameKey(response.data.id);
+            setGameKey(response.data.session_id);
             toast.success(`Game created successfully! Check a textfield on the bottom for the game id!`);
             setGameCreated(true);
         } else {
@@ -101,16 +102,24 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         setIsLoading(false);
     };
 
+    const setJoinGameData = async () => {
+        localStorage.setItem('player-name', playerName);
+        localStorage.setItem('agarnt-game-key', gameKey);
+    };
+
     const handleJoinGame = async () => {
         if (redirect) return;
-        const response = await axios.put(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`);
-        if (response.status == StatusCodes.OK) {
-            toast.info("Game key correct! Redirecting...", { autoClose: 500 });
-            //todo: store player name and game session key in local storage
-            setRedirect(true);
-        } else {
-            toast.error("Sorry but the supplied game key doesn't match any of the games.");
-        }
+        await setJoinGameData();
+        setRedirect(true);
+        // const response = await axios.put(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`);
+        // if (response.status == StatusCodes.OK) {
+        //     toast.info("Game key correct! Redirecting...", { autoClose: 500 });
+        //     //todo: store player name and game session key in local storage
+        //     localStorage.setItem('player-name', playerName);
+        //     localStorage.setItem('agarnt-game-key', gameKey);
+        // } else {
+        //     toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        // }
     };
 
     const topInputProps = gameCreated ? {
@@ -150,7 +159,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                 <ApiSelect
                     resourceEndpoint={`${process.env.REACT_APP_API_SERVER_URL}/games/types/`}
                     //@ts-ignore
-                    displayNameExtractor={(item: object) => item.name}
+                    displayNameExtractor={(item: object) => capitalize(item.toString())}
                     checkThroughKeys={['game_types']}
                     onSelect={(event: ChangeEvent<HTMLInputElement>) => setGameType(event.target.value)}
                     required={true}

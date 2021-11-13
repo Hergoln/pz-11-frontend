@@ -7,38 +7,33 @@ import Circle from '../../components/threejs/Circle';
 interface PlayerProps {
     color: string;
     position: number[3];
+    currentRadius: number;
     frameCallback: RenderCallback;
 }
 
 const START_RADIUS = 0.2;
 
-const AgarntPlayer = ({ color, position, frameCallback }: PlayerProps) => {
-    const circleRef = useRef();
-
+const AgarntPlayer = ({ color, position, currentRadius, frameCallback }: PlayerProps) => {
 
     const { camera } = useThree();
 
     const cameraSmoothTween = useMemo(() => new TWEEN.Tween(camera.position), [camera]);
 
-    const [radius, setRadius] = useState(START_RADIUS);
-
     //todo: create a function calculating speed in relation to radius
 
-    useFrame(frameCallback);
-
     useFrame((_state, _delta) => {
+        frameCallback?.(_state, _delta);
         TWEEN.update();
         cameraSmoothTween.to(
             {
-                x: circleRef.current.position.x,
-                y: circleRef.current.position.y,
+                x: position[0],
+                y: position[1],
                 z: camera.position.z
-            }, 100).
-            easing(TWEEN.Easing.Cubic.Out).
+            }, 0).
             start();
     });
 
-    return <Circle color={color} args={[radius, 32]} ref={circleRef} position={position} />;
+    return <Circle color={color} args={[currentRadius, 32]} position={position} />;
 };
 
 export default AgarntPlayer;

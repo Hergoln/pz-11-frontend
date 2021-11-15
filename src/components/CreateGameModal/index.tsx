@@ -102,24 +102,17 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         setIsLoading(false);
     };
 
-    const setJoinGameData = async () => {
-        localStorage.setItem('player-name', playerName);
-        localStorage.setItem('agarnt-game-key', gameKey);
-    };
-
     const handleJoinGame = async () => {
         if (redirect) return;
-        await setJoinGameData();
-        setRedirect(true);
-        // const response = await axios.put(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`);
-        // if (response.status == StatusCodes.OK) {
-        //     toast.info("Game key correct! Redirecting...", { autoClose: 500 });
-        //     //todo: store player name and game session key in local storage
-        //     localStorage.setItem('player-name', playerName);
-        //     localStorage.setItem('agarnt-game-key', gameKey);
-        // } else {
-        //     toast.error("Sorry but the supplied game key doesn't match any of the games.");
-        // }
+        const response = await axios.get(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`)
+        if (response.status == StatusCodes.OK) {
+            toast.info("Game key correct! Redirecting...", { autoClose: 1000 });
+            localStorage.setItem('player-name', playerName);
+            localStorage.setItem('agarnt-game-key', gameKey);
+            setRedirect(true);
+        } else {
+            toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        }
     };
 
     const topInputProps = gameCreated ? {

@@ -1,9 +1,10 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, RenderCallback, useFrame, useThree } from '@react-three/fiber';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
-import Circle from '../../components/threejs/Circle';
 import AgarntPlayer from '../../players/AgarntPlayer';
 import { AgarntPlayerState, INITIAL_STATE, Food } from '../../global/game-states/agarnt';
+import getRandomCssColor from '../../global/util/getRandomCssColor';
+import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
 
 interface InputMap {
     UP: boolean;
@@ -27,7 +28,7 @@ function AgarntPage() {
         RIGHT: false,
     });
 
-    const playerColor = useMemo(() => getRandomColor(), []);
+    const playerColor = useMemo(() => getRandomCssColor(), []);
 
     useEffect(() => {
         //@ts-ignore
@@ -106,13 +107,6 @@ function AgarntPage() {
         }
     }
 
-    function getRandomColor() {
-        const r = Math.floor(Math.random() * 255);
-        const g = Math.floor(Math.random() * 255);
-        const b = Math.floor(Math.random() * 255);
-        return `rgb(${r}, ${g}, ${b})`;
-    }
-
     const websocketOptions = {
         onOpen: initGameListeners,
         onClose: cleanupGameListeners,
@@ -138,17 +132,21 @@ function AgarntPage() {
         // console.log(gameState.player.x, gameState.player.y)
     };
 
+    const { x, y, radius } = gameState.player;
+
+    console.log(x, y);
+
     return (
         //@ts-ignore
         <Canvas ref={canvasRef} orthographic camera={{ zoom: 100, position: [0, 0, 100] }}>
             <ambientLight />
             {/* pass position and other stuff here, move it from agarnt player  */}
-            <AgarntPlayer color={playerColor} position={[gameState.player.x, gameState.player.y, 0]} currentRadius={gameState.player.radius} frameCallback={playerRenderFunc} />
+            <AgarntPlayer color={playerColor} position={[x, y, 0]} currentRadius={radius} frameCallback={playerRenderFunc} />
             {
                 /* here we will render all of the other players */
-                gameState.players.map((player: AgarntPlayerState, index: number) => {
+                gameState.players.map(({ radius, x, y }: AgarntPlayerState, index: number) => {
                     //@ts-ignore
-                    return <Circle key={index} color={getRandomColor()} args={[player.radius, 32]} position={[player.x, player.y, 0]} />;
+                    return <RandomColorCircle key={index} radius={radius} position={[x, y, 0]} />;
                 })
             }
             {
@@ -156,7 +154,7 @@ function AgarntPage() {
                 gameState.food.map((food: Food, index: number) => {
                     //todo: make agarnt player without camera that assigns its own color inside (to stop color flickering)
                     //@ts-ignore
-                    return <Circle key={index} color={'red'} args={[FOOD_RADIUS, 32]} position={[food[0], food[1], 0]} />;
+                    return <RandomColorCircle key={index} radius={FOOD_RADIUS} position={[food[0], food[1], 0]} />;
                 })
             }
         </Canvas>

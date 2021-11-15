@@ -2,7 +2,9 @@ import React from 'react';
 //@ts-ignore
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import MainPage from './pages/MainPage';
-import { InfoPage } from './pages/InfoPage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
+import { FAQPage } from './pages/FAQPage';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,6 +22,9 @@ function App() {
               <Route exact path='/infopage/' component={InfoPage} />
               <Route exact path='/agarnt/' component={AgarntPage} />
               <Route exact path='/' component={MainPage} />
+              <Route exact path='/about/' component={AboutPage} />
+              <Route exact path='/contact/' component={ContactPage} />
+              <Route exact path='/faq/' component={FAQPage} />
             </Switch>
           </Router>
         </div>

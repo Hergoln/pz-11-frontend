@@ -27,7 +27,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const handleJoinGame = async () => {
         setIsLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
-        if (response.status == StatusCodes.OK) {
+        if (response.status === StatusCodes.OK) {
             toast.success("Game key correct! Redirecting...", { autoClose: 1000 });
             localStorage.setItem('player-name', playerName);
             localStorage.setItem('agarnt-game-key', gameId);

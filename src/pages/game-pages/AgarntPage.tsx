@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
@@ -18,12 +18,13 @@ function AgarntPage() {
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState(INITIAL_STATE);
-    const [currentInput, setCurrentInput] = useState<InputMap>({
+    const [currentInput,] = useState<InputMap>({
         UP: false,
         DOWN: false,
         LEFT: false,
         RIGHT: false,
     });
+    const [camera, setCamera] = useState(null);
 
     useEffect(() => {
         //@ts-ignore
@@ -48,6 +49,12 @@ function AgarntPage() {
         } else {
             // console.log("response" + event.data.toString());
             const newState = JSON.parse(event.data);
+            if (camera) {
+                //@ts-ignore
+                camera.position.x = newState.player.x;
+                //@ts-ignore
+                camera.position.y = newState.player.y;
+            }
             setGameState(newState);
         }
     }
@@ -120,7 +127,10 @@ function AgarntPage() {
         sendMessage,
     } = useWebSocket(websocketUrl, websocketOptions);
 
-    const playerRenderFunc: RenderCallback = (_state, _delta) => {
+    const playerRenderFunc: RenderCallback = (state, _delta) => {
+        if (!!!camera) {
+            setCamera(state.camera);
+        }
         const message = JSON.stringify({
             directions: currentInput,
         });
@@ -128,14 +138,12 @@ function AgarntPage() {
         // console.log(gameState.player.x, gameState.player.y)
     };
 
-    const { x, y, radius } = gameState.player;
-
     return (
         //@ts-ignore
         <Canvas ref={canvasRef} orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
             <ambientLight />
             {/* pass position and other stuff here, move it from agarnt player  */}
-            <AgarntPlayer position={[x, y, 0]} currentRadius={radius} frameCallback={playerRenderFunc} playerName={currentPlayerName} cameraShouldFollow />
+            <AgarntPlayer position={[gameState.player.x, gameState.player.y, 0]} currentRadius={gameState.player.radius} frameCallback={playerRenderFunc} playerName={currentPlayerName} />
             {
                 /* here we will render all of the other players */
                 gameState.players.map(({ radius, x, y, name }: AgarntPlayerState, index: number) => {

@@ -1,5 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { useFrame } from '@react-three/fiber'
+import React from 'react'
 
 
 const Circle = React.forwardRef(({ color, args, ...props }, ref) => {

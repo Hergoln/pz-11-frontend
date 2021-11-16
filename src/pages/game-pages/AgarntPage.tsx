@@ -132,21 +132,19 @@ function AgarntPage() {
 
     return (
         //@ts-ignore
-        <Canvas ref={canvasRef} orthographic camera={{ zoom: 100, position: [0, 0, 100] }}>
+        <Canvas ref={canvasRef} orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
             <ambientLight />
             {/* pass position and other stuff here, move it from agarnt player  */}
             <AgarntPlayer position={[x, y, 0]} currentRadius={radius} frameCallback={playerRenderFunc} playerName={currentPlayerName} cameraShouldFollow />
             {
                 /* here we will render all of the other players */
                 gameState.players.map(({ radius, x, y, playerName }: AgarntPlayerState, index: number) => {
-                    //@ts-ignore
-                    return <AgarntPlayer key={index} args={[radius, 32]} position={[x, y, 0]} playerName={"temp"} />;
+                    return <AgarntPlayer key={index} currentRadius={radius} position={[x, y, 0]} playerName={"temp"} />;
                 })
             }
             {
                 /*and here will be foods*/
                 gameState.food.map((food: Food, index: number) => {
-                    //todo: make agarnt player without camera that assigns its own color inside (to stop color flickering)
                     //@ts-ignore
                     return <RandomColorCircle key={index} args={[FOOD_RADIUS, 32]} position={[food[0], food[1], 0]} />;
                 })

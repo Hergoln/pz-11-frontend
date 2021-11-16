@@ -3,7 +3,7 @@ interface AgarntPlayerState {
     x: number;
     y: number;
     radius: number;
-    playerName: string;
+    name: string;
 }
 
 interface Food {
@@ -18,7 +18,7 @@ interface AgarntState {
 }
 
 const INITIAL_STATE: AgarntState = {
-    player: { x: 0, y: 0, radius: 0.2, playerName: '' },
+    player: { x: 0, y: 0, radius: 0.2, name: '' },
     players: [],
     food: [],
 };

@@ -138,8 +138,8 @@ function AgarntPage() {
             <AgarntPlayer position={[x, y, 0]} currentRadius={radius} frameCallback={playerRenderFunc} playerName={currentPlayerName} cameraShouldFollow />
             {
                 /* here we will render all of the other players */
-                gameState.players.map(({ radius, x, y, playerName }: AgarntPlayerState, index: number) => {
-                    return <AgarntPlayer key={index} currentRadius={radius} position={[x, y, 0]} playerName={"temp"} />;
+                gameState.players.map(({ radius, x, y, name }: AgarntPlayerState, index: number) => {
+                    return <AgarntPlayer key={index} currentRadius={radius} position={[x, y, 0]} playerName={name} />;
                 })
             }
             {

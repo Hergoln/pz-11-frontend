@@ -45,7 +45,7 @@ const AgarntPlayer = ({ position, currentRadius, cameraShouldFollow, playerName,
     return (
         <group>
             <RandomColorCircle args={[currentRadius, 32]} position={position} />
-            <Text displayText={playerName} font={nameFont} size={START_NAME_SIZE + currentRadius / 3} height={1} position={[position[0], position[1]]} />
+            <Text displayText={playerName} font={nameFont} size={currentRadius / 3} height={1} position={[position[0], position[1]]} />
         </group>
     );
 };

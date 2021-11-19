@@ -26,12 +26,16 @@ const ApiSelect = ({ resourceEndpoint, displayNameExtractor, onSelect, style, ch
         return val;
     };
 
+    const resourceGetter = async (resourceEndpoint: string, checkThroughKeys: string[]) => {
+        const response = await axios.get(resourceEndpoint);
+        //@ts-ignore
+        setOptions(checkThroughKeys ? digThrough(response.data, checkThroughKeys) : response.data);
+    };
+
     useEffect(() => {
-        axios.get(resourceEndpoint).then(response => {
-            //@ts-ignore
-            setOptions(checkThroughKeys ? digThrough(response.data, checkThroughKeys) : response.data); //note: this should be changed to use spread operator (...) when the api data starts returning an array
-        });
-    }, [resourceEndpoint, checkThroughKeys])
+        //@ts-ignore
+        resourceGetter(resourceEndpoint, checkThroughKeys);
+    }, [])
 
 
     return (

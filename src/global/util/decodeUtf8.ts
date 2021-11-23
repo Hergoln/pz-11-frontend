@@ -1,4 +1,6 @@
+
+const utf8Decoder = new TextDecoder("utf-8");
+
 export default function decodeUtf8(bytes: BufferSource) {
-    const decoder = new TextDecoder("utf-8");
-    return decoder.decode(bytes);
+    return utf8Decoder.decode(bytes);
 }

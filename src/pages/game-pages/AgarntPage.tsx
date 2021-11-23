@@ -2,8 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
 import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
-import { AgarntPlayerState, INITIAL_STATE, Food } from '../../global/game-states/agarnt';
+import { AgarntPlayerState, AgarntState, INITIAL_STATE } from '../../global/game-states/agarnt';
 import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
+//@ts-ignore
+import { inflate, deflate } from 'pako';
 
 interface InputMap {
     UP: boolean;
@@ -14,10 +16,10 @@ interface InputMap {
 
 function AgarntPage() {
 
-    const FOOD_RADIUS = 0.1;
+    const FOOD_RADIUS = 0.25;
 
     const canvasRef = useRef();
-    const [gameState, setGameState] = useState(INITIAL_STATE);
+    const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
     const [currentInput,] = useState<InputMap>({
         UP: false,
         DOWN: false,
@@ -114,7 +116,7 @@ function AgarntPage() {
         onClose: cleanupGameListeners,
         onMessage: handleGameMessage,
         //@ts-ignore
-        onError: (event: WebSocketEventMap['error']) => console.log("server made a fucky wucky UwU")
+        onError: (_event: WebSocketEventMap['error']) => console.log("server made a fucky wucky UwU")
     };
 
     const gameSessionId = localStorage.getItem("agarnt-game-key") || '';
@@ -123,9 +125,7 @@ function AgarntPage() {
     //@ts-ignore
     const websocketUrl = `${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(currentPlayerName)}`
 
-    const {
-        sendMessage,
-    } = useWebSocket(websocketUrl, websocketOptions);
+    const { sendMessage } = useWebSocket(websocketUrl, websocketOptions);
 
     const playerRenderFunc: RenderCallback = (state, _delta) => {
         if (!!!camera) {
@@ -152,7 +152,7 @@ function AgarntPage() {
             }
             {
                 /*and here will be foods*/
-                gameState.food.map((food: Food, index: number) => {
+                gameState.food.map((food: number[], index: number) => {
                     //@ts-ignore
                     return <RandomColorCircle key={index} args={[FOOD_RADIUS, 32]} position={[food[0], food[1], 0]} />;
                 })

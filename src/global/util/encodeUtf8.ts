@@ -1,3 +1,4 @@
 export default function encodeUtf8(s: string) {
-    return "";
+    const encoder = new TextEncoder();
+    return encoder.encode(s);
 }

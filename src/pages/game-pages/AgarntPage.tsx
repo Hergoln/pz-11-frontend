@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
+import { ungzip, gzip } from 'pako';
 import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
-import { AgarntPlayerState, AgarntState, INITIAL_STATE } from '../../global/game-states/agarnt';
+import { AgarntPlayerState, AgarntState, AgarntStateDTO, INITIAL_STATE, mapAgarntDTOToState } from '../../global/game-states/agarnt';
 import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
-//@ts-ignore
-import { inflate, deflate } from 'pako';
+import encodeUtf8 from '../../global/util/encodeUtf8';
+import decodeUtf8 from '../../global/util/decodeUtf8';
 
 interface InputMap {
     UP: boolean;
@@ -13,6 +14,24 @@ interface InputMap {
     LEFT: boolean;
     RIGHT: boolean;
 }
+
+interface InputMapDTO {
+    U: boolean;
+    D: boolean;
+    L: boolean;
+    R: boolean;
+}
+
+const mapInputToDTO = (data: InputMap) => {
+    return {
+        directions: {
+            U: data.UP,
+            D: data.DOWN,
+            R: data.RIGHT,
+            L: data.LEFT,
+        }
+    };
+};
 
 function AgarntPage() {
 
@@ -45,12 +64,13 @@ function AgarntPage() {
         document.removeEventListener('keyup', handleAgarntKeyUp);
     }
 
-    function handleGameMessage(event: WebSocketEventMap['message']) {
+    async function handleGameMessage(event: WebSocketEventMap['message']) {
         if (event.data.error) {
             console.log("server made a fucky wucky");
         } else {
-            // console.log("response" + event.data.toString());
-            const newState = JSON.parse(event.data);
+            const message = await event.data.arrayBuffer();
+            const newStateDTO: AgarntStateDTO = JSON.parse(decodeUtf8(ungzip(message)));
+            const newState = mapAgarntDTOToState(newStateDTO);
             if (camera) {
                 //@ts-ignore
                 camera.position.x = newState.player.x;
@@ -131,10 +151,9 @@ function AgarntPage() {
         if (!!!camera) {
             setCamera(state.camera);
         }
-        const message = JSON.stringify({
-            directions: currentInput,
-        });
-        sendMessage(message);
+        const message = JSON.stringify(mapInputToDTO(currentInput));
+        const compressedMessage = gzip(encodeUtf8(message));
+        sendMessage(compressedMessage);
         // console.log(gameState.player.x, gameState.player.y)
     };
 

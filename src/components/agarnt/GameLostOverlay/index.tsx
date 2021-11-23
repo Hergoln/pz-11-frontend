@@ -11,20 +11,21 @@ interface OverlayProps {
 }
 
 const GameLostOverlay = (props: OverlayProps) => {
-
     const [currentTime, setCurrentTime] = useState(props.waitTime);
     const [intervalID, setIntervalID] = useState(null);
 
-    const handleClick = (event: MouseEvent) => currentTime <= 0 && props.onClick(event)
+    const handleClick = (event: MouseEvent) => currentTime <= 0 && props.onClick(event);
 
     useEffect(() => {
         if (props.open && !!!intervalID) {
             //@ts-ignore
-            setIntervalID(window.setInterval(() => setCurrentTime(time => time - 1), 1000));
+            setIntervalID(window.setInterval(() => setCurrentTime((time) => time - 1), 1000));
         }
 
-        //@ts-ignore
-        return () => {currentTime <= 0 && clearInterval(intervalID)};
+        return () => {
+            //@ts-ignore
+            currentTime <= 0 && clearInterval(intervalID);
+        };
     }, [props.open, intervalID, currentTime]);
 
     return (
@@ -32,7 +33,9 @@ const GameLostOverlay = (props: OverlayProps) => {
             <GameLostLayout>
                 <GameLostText>{props.gameLostText}</GameLostText>
                 <GameLostText>You can try again in:</GameLostText>
-                <GameLostBigText>{currentTime > 0 ? `${currentTime} seconds` : 'now!'}</GameLostBigText>
+                <GameLostBigText>
+                    {currentTime > 0 ? `${currentTime} seconds` : 'now!'}
+                </GameLostBigText>
             </GameLostLayout>
         </Backdrop>
     );

@@ -48,13 +48,13 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const updatePlayerName = (event: ChangeEvent<HTMLInputElement>) => setPlayerName(event.target.value);
 
     const handleGameKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
-        canPlayerJoinGame(event);
         updateGameId(event);
+        canPlayerJoinGame(event);
     };
 
     const handlePlayerNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        canPlayerJoinGame(event);
         updatePlayerName(event);
+        canPlayerJoinGame(event);
     };
 
     return (

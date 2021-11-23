@@ -1,9 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
+import { ungzip, gzip } from 'pako';
 import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
-import { AgarntPlayerState, INITIAL_STATE, Food } from '../../global/game-states/agarnt';
+import { AgarntPlayerState, AgarntState, AgarntStateDTO, INITIAL_STATE, mapAgarntDTOToState } from '../../global/game-states/agarnt';
 import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
+import encodeUtf8 from '../../global/util/encodeUtf8';
+import decodeUtf8 from '../../global/util/decodeUtf8';
 
 interface InputMap {
     UP: boolean;
@@ -12,12 +15,30 @@ interface InputMap {
     RIGHT: boolean;
 }
 
+interface InputMapDTO {
+    U: boolean;
+    D: boolean;
+    L: boolean;
+    R: boolean;
+}
+
+const mapInputToDTO = (data: InputMap) => {
+    return {
+        directions: {
+            U: data.UP,
+            D: data.DOWN,
+            R: data.RIGHT,
+            L: data.LEFT,
+        }
+    };
+};
+
 function AgarntPage() {
 
-    const FOOD_RADIUS = 0.1;
+    const FOOD_RADIUS = 0.25;
 
     const canvasRef = useRef();
-    const [gameState, setGameState] = useState(INITIAL_STATE);
+    const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
     const [currentInput,] = useState<InputMap>({
         UP: false,
         DOWN: false,
@@ -43,12 +64,13 @@ function AgarntPage() {
         document.removeEventListener('keyup', handleAgarntKeyUp);
     }
 
-    function handleGameMessage(event: WebSocketEventMap['message']) {
+    async function handleGameMessage(event: WebSocketEventMap['message']) {
         if (event.data.error) {
             console.log("server made a fucky wucky");
         } else {
-            // console.log("response" + event.data.toString());
-            const newState = JSON.parse(event.data);
+            const message = await event.data.arrayBuffer();
+            const newStateDTO: AgarntStateDTO = JSON.parse(decodeUtf8(ungzip(message)));
+            const newState = mapAgarntDTOToState(newStateDTO);
             if (camera) {
                 //@ts-ignore
                 camera.position.x = newState.player.x;
@@ -114,7 +136,7 @@ function AgarntPage() {
         onClose: cleanupGameListeners,
         onMessage: handleGameMessage,
         //@ts-ignore
-        onError: (event: WebSocketEventMap['error']) => console.log("server made a fucky wucky UwU")
+        onError: (_event: WebSocketEventMap['error']) => console.log("server made a fucky wucky UwU")
     };
 
     const gameSessionId = localStorage.getItem("agarnt-game-key") || '';
@@ -123,18 +145,15 @@ function AgarntPage() {
     //@ts-ignore
     const websocketUrl = `${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(currentPlayerName)}`
 
-    const {
-        sendMessage,
-    } = useWebSocket(websocketUrl, websocketOptions);
+    const { sendMessage } = useWebSocket(websocketUrl, websocketOptions);
 
     const playerRenderFunc: RenderCallback = (state, _delta) => {
         if (!!!camera) {
             setCamera(state.camera);
         }
-        const message = JSON.stringify({
-            directions: currentInput,
-        });
-        sendMessage(message);
+        const message = JSON.stringify(mapInputToDTO(currentInput));
+        const compressedMessage = gzip(encodeUtf8(message));
+        sendMessage(compressedMessage);
         // console.log(gameState.player.x, gameState.player.y)
     };
 
@@ -152,7 +171,7 @@ function AgarntPage() {
             }
             {
                 /*and here will be foods*/
-                gameState.food.map((food: Food, index: number) => {
+                gameState.food.map((food: number[], index: number) => {
                     //@ts-ignore
                     return <RandomColorCircle key={index} args={[FOOD_RADIUS, 32]} position={[food[0], food[1], 0]} />;
                 })

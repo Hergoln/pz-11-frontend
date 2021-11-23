@@ -104,6 +104,10 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
 
     const handleJoinGame = async () => {
         if (redirect) return;
+        if (!!!playerName) {
+            toast.error("Please input your player name!", { autoClose: 1500 });
+            return;
+        }
         const response = await axios.get(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`)
         if (response.status === StatusCodes.OK) {
             toast.info("Game key correct! Redirecting...", { autoClose: 1000 });

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
@@ -13,7 +13,7 @@ import {
 import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
 import encodeUtf8 from '../../global/util/encodeUtf8';
 import decodeUtf8 from '../../global/util/decodeUtf8';
-import GameLostOverlay from '../../components/agarnt/GameLostOverlay';
+import GameLostScreen from '../../components/agarnt/GameLostScreen';
 
 interface InputMap {
     UP: boolean;
@@ -51,8 +51,10 @@ function AgarntPage() {
         LEFT: false,
         RIGHT: false,
     });
-    const [shouldReconnect, setShouldReconnect] = useState(false);
     const [camera, setCamera] = useState(null);
+
+    const websocketClosed = (state: ReadyState) =>
+        state === ReadyState.CLOSING || state === ReadyState.CLOSED;
 
     useEffect(() => {
         //@ts-ignore
@@ -142,7 +144,6 @@ function AgarntPage() {
         onOpen: initGameListeners,
         onClose: cleanupGameListeners,
         onMessage: handleGameMessage,
-        //@ts-ignore
         onError: (_event: WebSocketEventMap['error']) =>
             console.log('server made a fucky wucky UwU'),
     };
@@ -156,19 +157,7 @@ function AgarntPage() {
         currentPlayerName
     )}`;
 
-    const websocketClosed = (state: ReadyState) =>
-        state === ReadyState.CLOSING || state === ReadyState.CLOSED;
-
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
-
-    if (shouldReconnect && !websocketClosed(readyState)) {
-        setShouldReconnect(false);
-    }
-
-    function reconnect() {
-        console.log('no elo megele');
-        setShouldReconnect(true);
-    }
 
     const playerRenderFunc: RenderCallback = (state, _delta) => {
         if (!!!camera) {
@@ -181,6 +170,7 @@ function AgarntPage() {
 
     return (
         <>
+            <h2 style={{ marginTop: 25, marginLeft: 25 }}>Score: {gameState.score}</h2>
             <Canvas
                 //@ts-ignore
                 ref={canvasRef}
@@ -212,11 +202,11 @@ function AgarntPage() {
                 }
                 {
                     /*and here will be foods*/
-                    gameState.food.map((food: number[], index: number) => {
+                    gameState.food.map((food: number[]) => {
                         //@ts-ignore
                         return (
                             <RandomColorCircle
-                                key={index}
+                                key={food.toString()}
                                 args={[FOOD_RADIUS, 32]}
                                 position={[food[0], food[1], 0]}
                             />
@@ -224,9 +214,10 @@ function AgarntPage() {
                     })
                 }
             </Canvas>
-            <GameLostOverlay
+            <GameLostScreen
+                playerScore={gameState.score}
                 open={websocketClosed(readyState)}
-                onClick={reconnect}
+                onRetry={() => window.location.reload()}
                 waitTime={5}
                 gameLostText="You were eaten!"
             />

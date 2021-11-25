@@ -27,7 +27,6 @@ interface Props {
 
 export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
-    //todo: if game is created then change game session name text field to player name text field or add it below/above the game session one
     const [gameCreated, setGameCreated] = useState(false);
     const [gameType, setGameType] = useState('');
     const [gameName, setGameName] = useState('');

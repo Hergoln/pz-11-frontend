@@ -52,7 +52,7 @@ function AgarntPage() {
         LEFT: false,
         RIGHT: false,
     });
-    const [camera, setCamera] = useState({});
+    const [camera, setCamera] = useState(null);
 
     useEffect(() => {
         //@ts-ignore
@@ -78,7 +78,7 @@ function AgarntPage() {
             const message = await event.data.arrayBuffer();
             const newStateDTO: AgarntStateDTO = JSON.parse(decodeUtf8(ungzip(message)));
             const newState = mapAgarntDTOToState(newStateDTO);
-            if (camera) {
+            if (camera && newState) {
                 //@ts-ignore
                 camera.position.x = newState.player.x;
                 //@ts-ignore
@@ -222,9 +222,7 @@ function AgarntPage() {
                 }
             </Canvas>
             <GameLostOverlay
-                open={
-                    /*connectState === ReadyState.CLOSING || connectState === ReadyState.CLOSED*/ true
-                }
+                open={/*websocketClosed(connectState)*/ true}
                 onClick={reconnect}
                 waitTime={5}
                 gameLostText="You were eaten!"

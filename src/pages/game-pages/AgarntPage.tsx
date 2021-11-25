@@ -44,7 +44,6 @@ function AgarntPage() {
     const FOOD_RADIUS = 0.25;
 
     const canvasRef = useRef();
-    const [connectState, setConnectState] = useState<ReadyState>(ReadyState.UNINSTANTIATED);
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
     const [currentInput] = useState<InputMap>({
         UP: false,
@@ -52,6 +51,7 @@ function AgarntPage() {
         LEFT: false,
         RIGHT: false,
     });
+    const [shouldReconnect, setShouldReconnect] = useState(false);
     const [camera, setCamera] = useState(null);
 
     useEffect(() => {
@@ -138,11 +138,6 @@ function AgarntPage() {
         }
     }
 
-    function reconnect() {}
-
-    const websocketClosed = (state: ReadyState) =>
-        state === ReadyState.CLOSING || state === ReadyState.CLOSED;
-
     const websocketOptions = {
         onOpen: initGameListeners,
         onClose: cleanupGameListeners,
@@ -150,22 +145,30 @@ function AgarntPage() {
         //@ts-ignore
         onError: (_event: WebSocketEventMap['error']) =>
             console.log('server made a fucky wucky UwU'),
-        shouldReconnect: (_event: any) =>
-            connectState === ReadyState.CLOSING || connectState === ReadyState.CLOSED,
     };
 
     const gameSessionId = localStorage.getItem('agarnt-game-key') || '';
     const currentPlayerName = localStorage.getItem('player-name') || '';
 
-    //@ts-ignore
     const websocketUrl = `${
         process.env.REACT_APP_API_WEBSOCKET_SERVER_URL
     }/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(
         currentPlayerName
     )}`;
 
+    const websocketClosed = (state: ReadyState) =>
+        state === ReadyState.CLOSING || state === ReadyState.CLOSED;
+
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
-    // setConnectState(readyState); do not just set state here; this shit will re-render infinitely; first check if it changed
+
+    if (shouldReconnect && !websocketClosed(readyState)) {
+        setShouldReconnect(false);
+    }
+
+    function reconnect() {
+        console.log('no elo megele');
+        setShouldReconnect(true);
+    }
 
     const playerRenderFunc: RenderCallback = (state, _delta) => {
         if (!!!camera) {
@@ -222,7 +225,7 @@ function AgarntPage() {
                 }
             </Canvas>
             <GameLostOverlay
-                open={/*websocketClosed(connectState)*/ true}
+                open={websocketClosed(readyState)}
                 onClick={reconnect}
                 waitTime={5}
                 gameLostText="You were eaten!"

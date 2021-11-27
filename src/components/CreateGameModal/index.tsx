@@ -16,7 +16,12 @@ import { ReactComponent as ClipboardIcon } from "../../assets/images/svg/clipboa
 import ApiSelect from "../ApiSelect";
 import GameConfigAccordion from "../GameConfigAccordion";
 
-import { ConfigVarType, ConfigVariable } from "../../global/config/types";
+import {
+  ConfigVarType,
+  ConfigVariable,
+  mapResponseToConfig,
+  mapConfigToResponse,
+} from "../../global/config/types";
 import { capitalize } from "../../global/util/stringOperations";
 
 interface Props {
@@ -70,6 +75,24 @@ export const CreateGameModal = ({
     },
   };
 
+  const fetchConfigForGame = async (gameType: string) => {
+    const fetchUrl = `${
+      process.env.REACT_APP_API_SERVER_URL
+    }/game_config/${gameType.toLowerCase()}`;
+    const response = await axios.get(fetchUrl);
+    if (response.status === StatusCodes.OK) {
+      console.log(response.data);
+      const newConfig = mapResponseToConfig(response.data);
+      console.log(newConfig);
+      setConfig(newConfig);
+    } else {
+      toast.error(
+        "Error while fetching config from the server. Cause: " +
+          response.statusText
+      );
+    }
+  };
+
   const validateCreateGameInputs = () => {
     return gameType && gameName;
   };
@@ -90,9 +113,12 @@ export const CreateGameModal = ({
 
     setIsLoading(true);
     const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}/games/`;
+    const gameConfig = mapConfigToResponse(config);
+    console.log(gameConfig);
     const response = await axios.post(requestUrl, {
       type: gameType.toLowerCase(),
       name: gameName,
+      config: gameConfig,
     });
     if (response.status === StatusCodes.OK) {
       //@ts-ignore
@@ -196,9 +222,10 @@ export const CreateGameModal = ({
           //@ts-ignore
           displayNameExtractor={(item: object) => capitalize(item.toString())}
           checkThroughKeys={["game_types"]}
-          onSelect={(event: ChangeEvent<HTMLInputElement>) =>
-            setGameType(event.target.value)
-          }
+          onSelect={(event: ChangeEvent<HTMLInputElement>) => {
+            setGameType(event.target.value);
+            fetchConfigForGame(event.target.value);
+          }}
           required={true}
           label="Game"
           defaultValue=""
@@ -228,7 +255,7 @@ export const CreateGameModal = ({
           variant="standard"
           value={gameKey}
         />
-        {/*gameType &&*/ <GameConfigAccordion gameConfig={mockConfig} />}
+        {gameType && <GameConfigAccordion gameConfig={config} />}
       </div>
     </Modal>
   );

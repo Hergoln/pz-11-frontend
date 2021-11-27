@@ -48,6 +48,7 @@ const GameConfigAccordion = ({ gameConfig }: Props) => {
         variable.value = clampUpper(variable.value, variable.max);
       }
     }
+    console.log(variable);
   };
 
   const getInputFor = (name: string, configVar: ConfigVariable) => {
@@ -72,7 +73,7 @@ const GameConfigAccordion = ({ gameConfig }: Props) => {
           <NoIncrementInput
             //note: this is unoptimized as fuck; think about how we can improve on this design
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setConfigVar(name, event.target.value);
+              setConfigVar(name, parseFloat(event.target.value));
             }}
             defaultValue={configVar.value}
             inputProps={{
@@ -89,7 +90,7 @@ const GameConfigAccordion = ({ gameConfig }: Props) => {
         comp = (
           <NoIncrementInput
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setConfigVar(name, event.target.value)
+              setConfigVar(name, parseInt(event.target.value))
             }
             defaultValue={configVar.value}
             inputProps={{ maxLength: 20, type: "number" }}

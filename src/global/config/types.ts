@@ -33,18 +33,40 @@ interface ConfigVariable {
 type ConfigVarValue = number | boolean | string;
 
 const mapResponseToConfig = (response: object): GameConfig => {
-    return {
+    const vars = {};
+    //@ts-ignore
+    Object.keys(response.variables).forEach((key: string) => {
         //@ts-ignore
-        variables: {...Object.keys(response.variables).map((key: string) => {
-            //@ts-ignore
-            const variable = response.variables[key];
-            const varName = variable.readable_name;
-            variable.readableName = varName;
-            delete variable.readable_name;
-            return variable;
-        })}
-    }
+        const variable = response.variables[key];
+        const newVar = Object.assign({}, variable);
+        const varName = variable.readable_name;
+        delete newVar.readable_name;
+        newVar.readableName = varName;
+        //@ts-ignore
+        vars[key] = newVar;
+    });
+    return {
+        variables: vars
+    };
 };
 
-export { getConfigTypeForString, mapResponseToConfig, isNumericVariable };
+const mapConfigToResponse = (config: GameConfig): object => {
+    const vars = {};
+    Object.keys(config.variables).forEach((key: string) => {
+        const variable = config.variables[key];
+        const newVar = Object.assign({}, variable);
+        const varName = variable.readableName;
+        //@ts-ignore
+        delete newVar.readableName;
+        //@ts-ignore
+        newVar.readable_name = varName;
+        //@ts-ignore
+        vars[key] = newVar;
+    });
+    return {
+        variables: vars
+    };
+}
+
+export { getConfigTypeForString, mapResponseToConfig, isNumericVariable, mapConfigToResponse };
 export type { ConfigVarValue, ConfigVariable, ConfigVariableMap, GameConfig };

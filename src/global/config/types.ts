@@ -1,10 +1,10 @@
 
 
 export enum ConfigVarType {
-    STRING = 'string',
-    INTEGER = 'int',
-    FLOAT = 'float',
-    BOOLEAN = 'bool'
+    STRING = 'STRING',
+    INTEGER = 'INTEGER',
+    FLOAT = 'FLOAT',
+    BOOLEAN = 'BOOLEAN'
 };
 
 const getConfigTypeForString = (s: string) => {
@@ -12,18 +12,35 @@ const getConfigTypeForString = (s: string) => {
     return Object.keys(ConfigVarType).find((key: string) => ConfigVarType[key] === s);
 };
 
+const isNumericVariable = (variable: ConfigVariable) => (variable.type === ConfigVarType.FLOAT || variable.type === ConfigVarType.INTEGER);
+
+interface ConfigVariableMap {
+    [varName: string]: ConfigVariable;
+}
+
 interface GameConfig {
-    variables: ConfigVariable[];
+    variables: ConfigVariableMap;
 }
 
 interface ConfigVariable {
-    name: string;
+    readableName: string;
     type: ConfigVarType;
     value?: ConfigVarValue;
+    max?: number;
+    min?: number;
 }
 
 type ConfigVarValue = number | boolean | string;
 
+interface GameConfigDTO {
 
-export { getConfigTypeForString };
-export type { ConfigVarValue, ConfigVariable, GameConfig };
+}
+
+interface ConfigVariableDTO {
+
+}
+
+const mapResponseToConfig = (response: object) => {};
+
+export { getConfigTypeForString, mapResponseToConfig, isNumericVariable };
+export type { ConfigVarValue, ConfigVariable, ConfigVariableMap, GameConfig };

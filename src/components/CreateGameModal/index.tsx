@@ -39,6 +39,7 @@ export const CreateGameModal = ({
   const [playerName, setPlayerName] = useState("");
   const [copyTooltipText, setCopyTooltipText] = useState("Copy to clipboard");
   const [redirect, setRedirect] = useState(false);
+  const [config, setConfig] = useState({ variables: {} });
 
   const mockConfig = {
     variables: {

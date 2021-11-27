@@ -32,15 +32,19 @@ interface ConfigVariable {
 
 type ConfigVarValue = number | boolean | string;
 
-interface GameConfigDTO {
-
-}
-
-interface ConfigVariableDTO {
-
-}
-
-const mapResponseToConfig = (response: object) => {};
+const mapResponseToConfig = (response: object): GameConfig => {
+    return {
+        //@ts-ignore
+        variables: {...Object.keys(response.variables).map((key: string) => {
+            //@ts-ignore
+            const variable = response.variables[key];
+            const varName = variable.readable_name;
+            variable.readableName = varName;
+            delete variable.readable_name;
+            return variable;
+        })}
+    }
+};
 
 export { getConfigTypeForString, mapResponseToConfig, isNumericVariable };
 export type { ConfigVarValue, ConfigVariable, ConfigVariableMap, GameConfig };

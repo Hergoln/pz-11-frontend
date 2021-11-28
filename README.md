@@ -1,6 +1,25 @@
-# Getting Started with Create React App
+## **Project setup**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- Install `npm` from [this](https://www.npmjs.com/) link
+- Clone git repository into your desirable location
+- `cd` into cloned repo location
+- Run these commands:
+```
+    cp .env-template .env
+    npm install
+```
+**Note:** Installing packages may take a while
+
+- Run `npm start` to start the development server (it will be on [http://localhost:3000](http://localhost:3000) by default, unless you fiddle with the settings and change it)
+
+If you're using VS Code: 
+- Install `Prettier` and `ESLint` extensions
+- Make sure that ESLint is set up in the settings as your default formatter for JavaScript, TypeScript etc.
+- Check both `settings.json` and settings inside the VS Code itself (because they can actually differ from one another)
+
+
+Aaaaaand done!
+
 
 ## Available Scripts
 
@@ -40,7 +59,5 @@ Instead, it will copy all the configuration files and the transitive dependencie
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
 ## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).

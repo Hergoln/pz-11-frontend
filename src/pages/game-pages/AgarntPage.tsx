@@ -1,12 +1,19 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
-import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
 import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
-import { AgarntPlayerState, AgarntState, AgarntStateDTO, INITIAL_STATE, mapAgarntDTOToState } from '../../global/game-states/agarnt';
+import {
+    AgarntPlayerState,
+    AgarntState,
+    AgarntStateDTO,
+    INITIAL_STATE,
+    mapAgarntDTOToState,
+} from '../../global/game-states/agarnt';
 import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
 import encodeUtf8 from '../../global/util/encodeUtf8';
 import decodeUtf8 from '../../global/util/decodeUtf8';
+import GameLostScreen from '../../components/agarnt/GameLostScreen';
 
 interface InputMap {
     UP: boolean;
@@ -29,23 +36,25 @@ const mapInputToDTO = (data: InputMap) => {
             D: data.DOWN,
             R: data.RIGHT,
             L: data.LEFT,
-        }
+        },
     };
 };
 
 function AgarntPage() {
-
     const FOOD_RADIUS = 0.25;
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
-    const [currentInput,] = useState<InputMap>({
+    const [currentInput] = useState<InputMap>({
         UP: false,
         DOWN: false,
         LEFT: false,
         RIGHT: false,
     });
     const [camera, setCamera] = useState(null);
+
+    const websocketClosed = (state: ReadyState) =>
+        state === ReadyState.CLOSING || state === ReadyState.CLOSED;
 
     useEffect(() => {
         //@ts-ignore
@@ -66,12 +75,12 @@ function AgarntPage() {
 
     async function handleGameMessage(event: WebSocketEventMap['message']) {
         if (event.data.error) {
-            console.log("server made a fucky wucky");
+            console.log('server made a fucky wucky');
         } else {
             const message = await event.data.arrayBuffer();
             const newStateDTO: AgarntStateDTO = JSON.parse(decodeUtf8(ungzip(message)));
             const newState = mapAgarntDTOToState(newStateDTO);
-            if (camera) {
+            if (camera && newState) {
                 //@ts-ignore
                 camera.position.x = newState.player.x;
                 //@ts-ignore
@@ -135,17 +144,20 @@ function AgarntPage() {
         onOpen: initGameListeners,
         onClose: cleanupGameListeners,
         onMessage: handleGameMessage,
-        //@ts-ignore
-        onError: (_event: WebSocketEventMap['error']) => console.log("server made a fucky wucky UwU")
+        onError: (_event: WebSocketEventMap['error']) =>
+            console.log('server made a fucky wucky UwU'),
     };
 
-    const gameSessionId = localStorage.getItem("agarnt-game-key") || '';
-    const currentPlayerName = localStorage.getItem("player-name") || '';
+    const gameSessionId = localStorage.getItem('agarnt-game-key') || '';
+    const currentPlayerName = localStorage.getItem('player-name') || '';
 
-    //@ts-ignore
-    const websocketUrl = `${process.env.REACT_APP_API_WEBSOCKET_SERVER_URL}/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(currentPlayerName)}`
+    const websocketUrl = `${
+        process.env.REACT_APP_API_WEBSOCKET_SERVER_URL
+    }/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(
+        currentPlayerName
+    )}`;
 
-    const { sendMessage } = useWebSocket(websocketUrl, websocketOptions);
+    const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
 
     const playerRenderFunc: RenderCallback = (state, _delta) => {
         if (!!!camera) {
@@ -154,30 +166,63 @@ function AgarntPage() {
         const message = JSON.stringify(mapInputToDTO(currentInput));
         const compressedMessage = gzip(encodeUtf8(message));
         sendMessage(compressedMessage);
-        // console.log(gameState.player.x, gameState.player.y)
     };
 
     return (
-        //@ts-ignore
-        <Canvas ref={canvasRef} orthographic camera={{ zoom: 25, position: [0, 0, 100] }}>
-            <ambientLight />
-            {/* pass position and other stuff here, move it from agarnt player  */}
-            <AgarntPlayer position={[gameState.player.x, gameState.player.y, 0]} currentRadius={gameState.player.radius} frameCallback={playerRenderFunc} playerName={currentPlayerName} />
-            {
-                /* here we will render all of the other players */
-                gameState.players.map(({ radius, x, y, name }: AgarntPlayerState, index: number) => {
-                    return <AgarntPlayer key={index} currentRadius={radius} position={[x, y, 0]} playerName={name} />;
-                })
-            }
-            {
-                /*and here will be foods*/
-                gameState.food.map((food: number[], index: number) => {
-                    //@ts-ignore
-                    return <RandomColorCircle key={index} args={[FOOD_RADIUS, 32]} position={[food[0], food[1], 0]} />;
-                })
-            }
-        </Canvas>
+        <>
+            <h2 style={{ marginTop: 25, marginLeft: 25 }}>Score: {gameState.score}</h2>
+            <Canvas
+                //@ts-ignore
+                ref={canvasRef}
+                orthographic
+                camera={{ zoom: 25, position: [0, 0, 100] }}
+            >
+                <ambientLight />
+                {/* pass position and other stuff here, move it from agarnt player  */}
+                <AgarntPlayer
+                    position={[gameState.player.x, gameState.player.y, 0]}
+                    currentRadius={gameState.player.radius}
+                    frameCallback={playerRenderFunc}
+                    playerName={currentPlayerName}
+                />
+                {
+                    /* here we will render all of the other players */
+                    gameState.players.map(
+                        ({ radius, x, y, name }: AgarntPlayerState, index: number) => {
+                            return (
+                                <AgarntPlayer
+                                    key={index}
+                                    currentRadius={radius}
+                                    position={[x, y, 0]}
+                                    playerName={name}
+                                />
+                            );
+                        }
+                    )
+                }
+                {
+                    /*and here will be foods*/
+                    gameState.food.map((food: number[]) => {
+                        //@ts-ignore
+                        return (
+                            <RandomColorCircle
+                                key={food.toString()}
+                                args={[FOOD_RADIUS, 32]}
+                                position={[food[0], food[1], 0]}
+                            />
+                        );
+                    })
+                }
+            </Canvas>
+            <GameLostScreen
+                playerScore={gameState.score}
+                open={websocketClosed(readyState)}
+                onRetry={() => window.location.reload()}
+                waitTime={5}
+                gameLostText="You were eaten!"
+            />
+        </>
     );
-};
+}
 
 export default AgarntPage;

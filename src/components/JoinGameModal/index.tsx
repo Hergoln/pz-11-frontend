@@ -14,7 +14,7 @@ import {
     InputsParent,
 } from './styled';
 import { StatusCodes } from 'http-status-codes';
-//test
+
 interface Props {
     onCancel?: () => void;
     [x: string]: any;

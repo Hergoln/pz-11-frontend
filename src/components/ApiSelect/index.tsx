@@ -13,8 +13,14 @@ interface ApiSelectProps {
     [x: string]: any;
 }
 
-const ApiSelect = ({ resourceEndpoint, displayNameExtractor, onSelect, style, checkThroughKeys, ...selectProps }: ApiSelectProps) => {
-
+const ApiSelect = ({
+    resourceEndpoint,
+    displayNameExtractor,
+    onSelect,
+    style,
+    checkThroughKeys,
+    ...selectProps
+}: ApiSelectProps) => {
     const [options, setOptions] = useState([]);
 
     const digThrough = (data: object, keys: Array<string>) => {
@@ -35,17 +41,24 @@ const ApiSelect = ({ resourceEndpoint, displayNameExtractor, onSelect, style, ch
     useEffect(() => {
         //@ts-ignore
         resourceGetter(resourceEndpoint, checkThroughKeys);
-    }, [])
-
+    }, []);
 
     return (
-        <TextField onChange={onSelect} style={style} variant="standard" select={true} {...selectProps}>
-            {
-                options?.map((item, index) => {
-                    const name = displayNameExtractor(item);
-                    return <MenuItem value={name} key={index}>{name}</MenuItem>
-                })
-            }
+        <TextField
+            onChange={onSelect}
+            style={style}
+            variant="standard"
+            select={true}
+            {...selectProps}
+        >
+            {options?.map((item, index) => {
+                const name = displayNameExtractor(item);
+                return (
+                    <MenuItem value={name} key={index}>
+                        {name}
+                    </MenuItem>
+                );
+            })}
         </TextField>
     );
 };

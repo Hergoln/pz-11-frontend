@@ -47,7 +47,6 @@ const GameConfigAccordion = ({ gameConfig }: Props) => {
                 variable.value = clampUpper(variable.value, variable.max);
             }
         }
-        console.log(variable);
     };
 
     const getInputFor = (name: string, configVar: ConfigVariable) => {

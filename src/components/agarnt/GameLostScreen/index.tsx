@@ -47,7 +47,6 @@ const GameLostScreen = (props: OverlayProps) => {
                     <GameLostText>{props.gameLostText}</GameLostText>
                     <ContentContainer>
                         <GameLostBigText>{`Your score: ${props.playerScore}`}</GameLostBigText>
-                        {/*@ts-ignore*/}
                         <ButtonsParent>
                             <Button
                                 onClick={props.onRetry}

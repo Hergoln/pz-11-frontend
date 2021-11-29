@@ -16,7 +16,7 @@ import { ReactComponent as ClipboardIcon } from '../../assets/images/svg/clipboa
 import ApiSelect from '../ApiSelect';
 import GameConfigAccordion from '../GameConfigAccordion';
 
-import { ConfigVarType } from '../../global/config/types';
+import { mapResponseToConfig, mapConfigToResponse } from '../../global/config/types';
 import { capitalize } from '../../global/util/stringOperations';
 
 interface Props {
@@ -27,6 +27,7 @@ interface Props {
 
 export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
+    //todo: if game is created then change game session name text field to player name text field or add it below/above the game session one
     const [gameCreated, setGameCreated] = useState(false);
     const [gameType, setGameType] = useState('');
     const [gameName, setGameName] = useState('');
@@ -34,30 +35,21 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const [playerName, setPlayerName] = useState('');
     const [copyTooltipText, setCopyTooltipText] = useState('Copy to clipboard');
     const [redirect, setRedirect] = useState(false);
+    const [config, setConfig] = useState({ variables: {} });
 
-    const mockConfig = {
-        variables: [
-            {
-                name: 'players_count',
-                type: ConfigVarType.INTEGER,
-                value: 0,
-            },
-            {
-                name: 'whatever',
-                type: ConfigVarType.STRING,
-                value: '',
-            },
-            {
-                name: 'ecks_deee',
-                type: ConfigVarType.FLOAT,
-                value: 21.37,
-            },
-            {
-                name: 'ecks_deee_2',
-                type: ConfigVarType.BOOLEAN,
-                value: true,
-            },
-        ],
+    const fetchConfigForGame = async (gameType: string) => {
+        const fetchUrl = `${
+            process.env.REACT_APP_API_SERVER_URL
+        }/game_config/${gameType.toLowerCase()}`;
+        const response = await axios.get(fetchUrl);
+        if (response.status === StatusCodes.OK) {
+            const newConfig = mapResponseToConfig(response.data);
+            setConfig(newConfig);
+        } else {
+            toast.error(
+                'Error while fetching config from the server. Cause: ' + response.statusText
+            );
+        }
     };
 
     const validateCreateGameInputs = () => {
@@ -74,15 +66,16 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             toast.warning(
                 'It seems like your input game data is incorrect. Please check it and try again.'
             );
-            console.log(gameType, gameName);
             return;
         }
 
         setIsLoading(true);
         const requestUrl = `${process.env.REACT_APP_API_SERVER_URL}/games/`;
+        const gameConfig = mapConfigToResponse(config);
         const response = await axios.post(requestUrl, {
             type: gameType.toLowerCase(),
             name: gameName,
+            config: gameConfig,
         });
         if (response.status === StatusCodes.OK) {
             //@ts-ignore
@@ -179,9 +172,10 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     //@ts-ignore
                     displayNameExtractor={(item: object) => capitalize(item.toString())}
                     checkThroughKeys={['game_types']}
-                    onSelect={(event: ChangeEvent<HTMLInputElement>) =>
-                        setGameType(event.target.value)
-                    }
+                    onSelect={(event: ChangeEvent<HTMLInputElement>) => {
+                        setGameType(event.target.value);
+                        fetchConfigForGame(event.target.value);
+                    }}
                     required={true}
                     label="Game"
                     defaultValue=""
@@ -211,7 +205,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     variant="standard"
                     value={gameKey}
                 />
-                {gameType && <GameConfigAccordion gameConfig={mockConfig} />}
+                {gameType && <GameConfigAccordion gameConfig={config} />}
             </div>
         </Modal>
     );

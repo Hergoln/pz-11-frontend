@@ -46,35 +46,6 @@ export const CreateGameModal = ({
   const [redirect, setRedirect] = useState(false);
   const [config, setConfig] = useState({ variables: {} });
 
-  const mockConfig = {
-    variables: {
-      players_count: {
-        readableName: "Max number of players",
-        value: 10,
-        type: ConfigVarType.INTEGER,
-        max: 32,
-        min: 2,
-      },
-      whatever: {
-        type: ConfigVarType.STRING,
-        value: "pls",
-        readableName: "Default player name",
-      },
-      ecks_dee: {
-        type: ConfigVarType.FLOAT,
-        readableName: "Typical float to check",
-        min: 1.25,
-        max: 20.232,
-        value: 5.0,
-      },
-      check_me_pls: {
-        type: ConfigVarType.BOOLEAN,
-        readableName: "Random check",
-        value: false,
-      },
-    },
-  };
-
   const fetchConfigForGame = async (gameType: string) => {
     const fetchUrl = `${
       process.env.REACT_APP_API_SERVER_URL

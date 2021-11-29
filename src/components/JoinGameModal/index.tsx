@@ -44,10 +44,8 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
         setIsLoading(false);
     };
 
-    const canPlayerJoinGame = (event: ChangeEvent<HTMLInputElement>) =>
-        //@ts-ignore
-        setCanJoin(playerName && gameId);
-    //@ts-ignore
+    const canPlayerJoinGame = (eventResult: string, otherValue: string) =>
+        setCanJoin(!!eventResult && !!otherValue);
     const updateGameId = (event: ChangeEvent<HTMLInputElement>) => setGameId(event.target.value);
 
     const updatePlayerName = (event: ChangeEvent<HTMLInputElement>) =>
@@ -55,12 +53,12 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
 
     const handleGameKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
         updateGameId(event);
-        canPlayerJoinGame(event);
+        canPlayerJoinGame(event.target.value, playerName);
     };
 
     const handlePlayerNameChange = (event: ChangeEvent<HTMLInputElement>) => {
         updatePlayerName(event);
-        canPlayerJoinGame(event);
+        canPlayerJoinGame(event.target.value, gameId);
     };
 
     return (

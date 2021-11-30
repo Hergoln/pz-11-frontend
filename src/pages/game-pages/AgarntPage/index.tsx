@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
-import Box from '@mui/material/Box';
 import { ScoreDisplay } from './styled';
 import AgarntPlayer from '../../../components/agarnt/AgarntPlayer';
 import {

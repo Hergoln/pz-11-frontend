@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
@@ -13,7 +13,11 @@ import {
 import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
 import encodeUtf8 from '../../global/util/encodeUtf8';
 import decodeUtf8 from '../../global/util/decodeUtf8';
+import { clampLower } from '../../global/util/mathUtils';
 import GameLostScreen from '../../components/agarnt/GameLostScreen';
+
+import DefaultBackground from '../../assets/images/default-background.jpeg';
+import CanvasImage from '../../components/threejs/CanvasImage';
 
 interface InputMap {
     UP: boolean;
@@ -52,8 +56,6 @@ function AgarntPage() {
         RIGHT: false,
     });
     const [camera, setCamera] = useState(null);
-
-    const scaleCameraZoom = (playerRadius: number) => Math.sqrt(playerRadius);
 
     const websocketClosed = (state: ReadyState) =>
         state === ReadyState.CLOSING || state === ReadyState.CLOSED;
@@ -170,6 +172,10 @@ function AgarntPage() {
         sendMessage(compressedMessage);
     };
 
+    const f = (state: AgarntState) => {
+        return (state?.player?.radius ?? 0) * 10;
+    };
+
     return (
         <>
             <h2 style={{ marginTop: 25, marginLeft: 25 }}>Score: {gameState.score}</h2>
@@ -180,7 +186,6 @@ function AgarntPage() {
                 camera={{ zoom: 25, position: [0, 0, 100] }}
             >
                 <ambientLight />
-                {/* pass position and other stuff here, move it from agarnt player  */}
                 {
                     /* here we will render all of the other players */
                     gameState.players.map(

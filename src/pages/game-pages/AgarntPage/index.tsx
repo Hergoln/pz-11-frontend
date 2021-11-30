@@ -4,49 +4,23 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
 import Box from '@mui/material/Box';
 import { ScoreDisplay } from './styled';
-import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
+import AgarntPlayer from '../../../components/agarnt/AgarntPlayer';
 import {
     AgarntPlayerState,
     AgarntState,
     AgarntStateDTO,
     INITIAL_STATE,
     mapAgarntDTOToState,
-} from '../../global/game-states/agarnt';
-import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
-import encodeUtf8 from '../../global/util/encodeUtf8';
-import decodeUtf8 from '../../global/util/decodeUtf8';
-import { clampLower } from '../../global/util/mathUtils';
-import GameLostScreen from '../../components/agarnt/GameLostScreen';
+} from '../../../global/game-states/agarnt';
+import RandomColorCircle from '../../../components/agarnt/RandomColorCircle';
+import encodeUtf8 from '../../../global/util/encodeUtf8';
+import decodeUtf8 from '../../../global/util/decodeUtf8';
+import { clampLower } from '../../../global/util/mathUtils';
+import GameLostScreen from '../../../components/agarnt/GameLostScreen';
 
-import DefaultBackground from '../../assets/images/default-background.jpeg';
-import CanvasImage from '../../components/threejs/CanvasImage';
-
-interface InputMap {
-    UP: boolean;
-    DOWN: boolean;
-    LEFT: boolean;
-    RIGHT: boolean;
-}
-
-interface InputMapDTO {
-    directions: {
-        U: boolean;
-        D: boolean;
-        L: boolean;
-        R: boolean;
-    };
-}
-
-const mapInputToDTO = (data: InputMap): InputMapDTO => {
-    return {
-        directions: {
-            U: data.UP,
-            D: data.DOWN,
-            R: data.RIGHT,
-            L: data.LEFT,
-        },
-    };
-};
+import DefaultBackground from '../../../assets/images/default-background.jpeg';
+import CanvasImage from '../../../components/threejs/CanvasImage';
+import { InputMap, mapInputToDTO } from './types';
 
 function AgarntPage() {
     const RADIUS_SCALE_FACTOR = 5;

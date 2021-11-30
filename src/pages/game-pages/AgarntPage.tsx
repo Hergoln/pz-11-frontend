@@ -46,6 +46,7 @@ const mapInputToDTO = (data: InputMap) => {
 
 function AgarntPage() {
     const FOOD_RADIUS = 0.35;
+    const BASE_ZOOM = 25;
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
@@ -170,10 +171,13 @@ function AgarntPage() {
         const message = JSON.stringify(mapInputToDTO(currentInput));
         const compressedMessage = gzip(encodeUtf8(message));
         sendMessage(compressedMessage);
-    };
 
-    const f = (state: AgarntState) => {
-        return (state?.player?.radius ?? 0) * 10;
+        if (camera) {
+            //@ts-ignore
+            camera.zoom = BASE_ZOOM - gameState.player.radius;
+            //@ts-ignore
+            camera.updateProjectionMatrix();
+        }
     };
 
     return (
@@ -183,7 +187,7 @@ function AgarntPage() {
                 //@ts-ignore
                 ref={canvasRef}
                 orthographic
-                camera={{ zoom: 25, position: [0, 0, 100] }}
+                camera={{ zoom: 20, position: [0, 0, 100] }}
             >
                 <ambientLight />
                 {

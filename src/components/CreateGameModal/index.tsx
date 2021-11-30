@@ -205,7 +205,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     variant="standard"
                     value={gameKey}
                 />
-                {gameType && <GameConfigAccordion gameConfig={config} />}
+                {gameType && !gameCreated && <GameConfigAccordion gameConfig={config} />}
             </div>
         </Modal>
     );

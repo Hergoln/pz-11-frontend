@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
+import Box from '@mui/material/Box';
+import { ScoreDisplay } from './styled';
 import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
 import {
     AgarntPlayerState,
@@ -189,7 +191,9 @@ function AgarntPage() {
 
     return (
         <>
-            <h2 style={{ marginTop: 25, marginLeft: 25 }}>Score: {gameState.score}</h2>
+            <ScoreDisplay marginLeft={5} zIndex={9999}>
+                Score: {gameState.score}
+            </ScoreDisplay>
             <Canvas
                 //@ts-ignore
                 ref={canvasRef}

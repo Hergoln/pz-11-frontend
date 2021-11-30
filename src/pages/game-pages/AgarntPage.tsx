@@ -41,7 +41,7 @@ const mapInputToDTO = (data: InputMap) => {
 };
 
 function AgarntPage() {
-    const FOOD_RADIUS = 0.25;
+    const FOOD_RADIUS = 0.35;
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
@@ -52,6 +52,8 @@ function AgarntPage() {
         RIGHT: false,
     });
     const [camera, setCamera] = useState(null);
+
+    const scaleCameraZoom = (playerRadius: number) => Math.sqrt(playerRadius);
 
     const websocketClosed = (state: ReadyState) =>
         state === ReadyState.CLOSING || state === ReadyState.CLOSED;
@@ -179,12 +181,6 @@ function AgarntPage() {
             >
                 <ambientLight />
                 {/* pass position and other stuff here, move it from agarnt player  */}
-                <AgarntPlayer
-                    position={[gameState.player.x, gameState.player.y, 0]}
-                    currentRadius={gameState.player.radius}
-                    frameCallback={playerRenderFunc}
-                    playerName={currentPlayerName}
-                />
                 {
                     /* here we will render all of the other players */
                     gameState.players.map(
@@ -193,22 +189,27 @@ function AgarntPage() {
                                 <AgarntPlayer
                                     key={index}
                                     currentRadius={radius}
-                                    position={[x, y, 0]}
+                                    position={[x, y, radius]}
                                     playerName={name}
                                 />
                             );
                         }
                     )
                 }
+                <AgarntPlayer
+                    position={[gameState.player.x, gameState.player.y, gameState.player.radius]}
+                    currentRadius={gameState.player.radius}
+                    frameCallback={playerRenderFunc}
+                    playerName={currentPlayerName}
+                />
                 {
                     /*and here will be foods*/
                     gameState.food.map((food: number[]) => {
-                        //@ts-ignore
                         return (
                             <RandomColorCircle
                                 key={food.toString()}
                                 args={[FOOD_RADIUS, 32]}
-                                position={[food[0], food[1], 0]}
+                                position={[food[0], food[1], FOOD_RADIUS]}
                             />
                         );
                     })

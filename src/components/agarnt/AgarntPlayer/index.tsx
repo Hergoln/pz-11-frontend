@@ -30,7 +30,7 @@ const AgarntPlayer = ({ position, currentRadius, playerName, frameCallback }: Pl
                 font={nameFont}
                 size={currentRadius / 3}
                 height={1}
-                position={[position[0], position[1]]}
+                position={position}
             />
         </group>
     );

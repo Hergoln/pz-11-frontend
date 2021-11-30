@@ -60,7 +60,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         navigator.clipboard.writeText(gameKey);
         setCopyTooltipText('Copied!');
     };
-
+    //todo: hide config after creating game
     const handleCreateGame = async () => {
         if (!validateCreateGameInputs()) {
             toast.warning(

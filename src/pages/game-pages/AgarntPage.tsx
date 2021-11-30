@@ -27,13 +27,15 @@ interface InputMap {
 }
 
 interface InputMapDTO {
-    U: boolean;
-    D: boolean;
-    L: boolean;
-    R: boolean;
+    directions: {
+        U: boolean;
+        D: boolean;
+        L: boolean;
+        R: boolean;
+    };
 }
 
-const mapInputToDTO = (data: InputMap) => {
+const mapInputToDTO = (data: InputMap): InputMapDTO => {
     return {
         directions: {
             U: data.UP,

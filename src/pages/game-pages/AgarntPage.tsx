@@ -45,8 +45,10 @@ const mapInputToDTO = (data: InputMap) => {
 };
 
 function AgarntPage() {
-    const FOOD_RADIUS = 0.35;
-    const BASE_ZOOM = 25;
+    const RADIUS_SCALE_FACTOR = 5;
+    const FOOD_RADIUS = 0.5 / RADIUS_SCALE_FACTOR;
+    const BASE_ZOOM = 100;
+    const MIN_ZOOM = 5;
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
@@ -87,9 +89,9 @@ function AgarntPage() {
             const newState = mapAgarntDTOToState(newStateDTO);
             if (camera && newState) {
                 //@ts-ignore
-                camera.position.x = newState.player.x;
+                camera.position.x = newState.player.x / RADIUS_SCALE_FACTOR;
                 //@ts-ignore
-                camera.position.y = newState.player.y;
+                camera.position.y = newState.player.y / RADIUS_SCALE_FACTOR;
             }
             setGameState(newState);
         }
@@ -164,6 +166,13 @@ function AgarntPage() {
 
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
 
+    const scaleCameraZoom = (radius: number) => {
+        //@ts-ignore
+        camera.zoom = clampLower(BASE_ZOOM - radius * 1.5, MIN_ZOOM);
+        //@ts-ignore
+        camera.updateProjectionMatrix();
+    };
+
     const playerRenderFunc: RenderCallback = (state, _delta) => {
         if (!!!camera) {
             setCamera(state.camera);
@@ -172,12 +181,8 @@ function AgarntPage() {
         const compressedMessage = gzip(encodeUtf8(message));
         sendMessage(compressedMessage);
 
-        if (camera) {
-            //@ts-ignore
-            camera.zoom = BASE_ZOOM - gameState.player.radius;
-            //@ts-ignore
-            camera.updateProjectionMatrix();
-        }
+        //todo: scale other players and food back up after eating a lot
+        if (camera) scaleCameraZoom(gameState.player.radius);
     };
 
     return (
@@ -189,6 +194,11 @@ function AgarntPage() {
                 orthographic
                 camera={{ zoom: 20, position: [0, 0, 100] }}
             >
+                <CanvasImage
+                    img={DefaultBackground}
+                    width={gameState.boardSize[0]}
+                    height={gameState.boardSize[1]}
+                />
                 <ambientLight />
                 {
                     /* here we will render all of the other players */
@@ -197,8 +207,12 @@ function AgarntPage() {
                             return (
                                 <AgarntPlayer
                                     key={index}
-                                    currentRadius={radius}
-                                    position={[x, y, radius]}
+                                    currentRadius={radius / RADIUS_SCALE_FACTOR}
+                                    position={[
+                                        x / RADIUS_SCALE_FACTOR,
+                                        y / RADIUS_SCALE_FACTOR,
+                                        radius,
+                                    ]}
                                     playerName={name}
                                 />
                             );
@@ -206,8 +220,12 @@ function AgarntPage() {
                     )
                 }
                 <AgarntPlayer
-                    position={[gameState.player.x, gameState.player.y, gameState.player.radius]}
-                    currentRadius={gameState.player.radius}
+                    position={[
+                        gameState.player.x / RADIUS_SCALE_FACTOR,
+                        gameState.player.y / RADIUS_SCALE_FACTOR,
+                        gameState.player.radius,
+                    ]}
+                    currentRadius={gameState.player.radius / RADIUS_SCALE_FACTOR}
                     frameCallback={playerRenderFunc}
                     playerName={currentPlayerName}
                 />
@@ -218,7 +236,11 @@ function AgarntPage() {
                             <RandomColorCircle
                                 key={food.toString()}
                                 args={[FOOD_RADIUS, 32]}
-                                position={[food[0], food[1], FOOD_RADIUS]}
+                                position={[
+                                    food[0] / RADIUS_SCALE_FACTOR,
+                                    food[1] / RADIUS_SCALE_FACTOR,
+                                    FOOD_RADIUS,
+                                ]}
                             />
                         );
                     })

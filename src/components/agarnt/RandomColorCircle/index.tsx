@@ -8,7 +8,7 @@ interface CircleProps {
 }
 
 const RandomColorCircle = ({ position, args }: CircleProps) => {
-    const color = useMemo(() => getRandomCssColor(), []);
+    const color = useMemo(() => getRandomCssColor(50, 200), []);
 
     //@ts-ignore
     return <Circle args={args} position={position} color={color} />;

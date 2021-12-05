@@ -1,4 +1,3 @@
-
 interface AgarntPlayerState {
     x: number;
     y: number;
@@ -48,7 +47,7 @@ interface AgarntStateDTO {
     p: AgarntPlayerStateDTO;
     f: number[][];
     s: number;
-    bs: number[];
+    b: number[];
 }
 
 const mapAgarntDTOToState = (data: AgarntStateDTO): AgarntState => {
@@ -62,7 +61,7 @@ const mapAgarntDTOToState = (data: AgarntStateDTO): AgarntState => {
             radius: data.p.r,
         },
         score: data.s,
-        boardSize: data.bs,
+        boardSize: data.b,
     };
 };
 
@@ -77,17 +76,23 @@ const mapAgarntStateToDTO = (data: AgarntState): AgarntStateDTO => {
             r: data.player.radius,
         },
         s: data.score,
-        bs: data.boardSize,
+        b: data.boardSize,
     };
 };
 
 const INITIAL_STATE: AgarntState = {
-    player: { x: 0, y: 0, radius: 0.2, name: '', isDefeated: false },
+    player: { x: 0, y: 0, radius: 1, name: '', isDefeated: false },
     players: [],
     food: [],
     score: 0,
-    boardSize: [200,200]
+    boardSize: [200, 200],
 };
 
 export type { AgarntState, AgarntPlayerState, AgarntPlayerStateDTO, AgarntStateDTO };
-export { INITIAL_STATE, mapAgarntPlayerDTOToState, mapAgarntDTOToState, mapAgarntPlayerStateToDTO, mapAgarntStateToDTO };
+export {
+    INITIAL_STATE,
+    mapAgarntPlayerDTOToState,
+    mapAgarntDTOToState,
+    mapAgarntPlayerStateToDTO,
+    mapAgarntStateToDTO,
+};

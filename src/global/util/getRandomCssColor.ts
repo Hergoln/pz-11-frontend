@@ -1,7 +1,8 @@
+import randomFromRange from './randomFromRange';
 
-export default function getRandomCssColor() {
-    const r = Math.floor(Math.random() * 255);
-    const g = Math.floor(Math.random() * 255);
-    const b = Math.floor(Math.random() * 255);
+export default function getRandomCssColor(lowerBound: number, upperBound: number) {
+    const r = Math.floor(randomFromRange(lowerBound, upperBound));
+    const g = Math.floor(randomFromRange(lowerBound, upperBound));
+    const b = Math.floor(randomFromRange(lowerBound, upperBound));
     return `rgb(${r}, ${g}, ${b})`;
 }

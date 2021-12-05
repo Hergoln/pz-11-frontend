@@ -1,47 +1,31 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
-import AgarntPlayer from '../../components/agarnt/AgarntPlayer';
+import { ScoreDisplay } from './styled';
+import AgarntPlayer from '../../../components/agarnt/AgarntPlayer';
 import {
     AgarntPlayerState,
     AgarntState,
     AgarntStateDTO,
     INITIAL_STATE,
     mapAgarntDTOToState,
-} from '../../global/game-states/agarnt';
-import RandomColorCircle from '../../components/agarnt/RandomColorCircle';
-import encodeUtf8 from '../../global/util/encodeUtf8';
-import decodeUtf8 from '../../global/util/decodeUtf8';
-import GameLostScreen from '../../components/agarnt/GameLostScreen';
+} from '../../../global/game-states/agarnt';
+import RandomColorCircle from '../../../components/agarnt/RandomColorCircle';
+import encodeUtf8 from '../../../global/util/encodeUtf8';
+import decodeUtf8 from '../../../global/util/decodeUtf8';
+import { clampLower } from '../../../global/util/mathUtils';
+import GameLostScreen from '../../../components/agarnt/GameLostScreen';
 
-interface InputMap {
-    UP: boolean;
-    DOWN: boolean;
-    LEFT: boolean;
-    RIGHT: boolean;
-}
-
-interface InputMapDTO {
-    U: boolean;
-    D: boolean;
-    L: boolean;
-    R: boolean;
-}
-
-const mapInputToDTO = (data: InputMap) => {
-    return {
-        directions: {
-            U: data.UP,
-            D: data.DOWN,
-            R: data.RIGHT,
-            L: data.LEFT,
-        },
-    };
-};
+import DefaultBackground from '../../../assets/images/default-background.jpeg';
+import CanvasImage from '../../../components/threejs/CanvasImage';
+import { InputMap, mapInputToDTO } from './types';
 
 function AgarntPage() {
-    const FOOD_RADIUS = 0.25;
+    const RADIUS_SCALE_FACTOR = 5;
+    const FOOD_RADIUS = 0.5 / RADIUS_SCALE_FACTOR;
+    const BASE_ZOOM = 100;
+    const MIN_ZOOM = 5;
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
@@ -82,9 +66,9 @@ function AgarntPage() {
             const newState = mapAgarntDTOToState(newStateDTO);
             if (camera && newState) {
                 //@ts-ignore
-                camera.position.x = newState.player.x;
+                camera.position.x = newState.player.x / RADIUS_SCALE_FACTOR;
                 //@ts-ignore
-                camera.position.y = newState.player.y;
+                camera.position.y = newState.player.y / RADIUS_SCALE_FACTOR;
             }
             setGameState(newState);
         }
@@ -159,6 +143,13 @@ function AgarntPage() {
 
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
 
+    const scaleCameraZoom = (radius: number) => {
+        //@ts-ignore
+        camera.zoom = clampLower(BASE_ZOOM - radius * 1.5, MIN_ZOOM);
+        //@ts-ignore
+        camera.updateProjectionMatrix();
+    };
+
     const playerRenderFunc: RenderCallback = (state, _delta) => {
         if (!!!camera) {
             setCamera(state.camera);
@@ -166,25 +157,28 @@ function AgarntPage() {
         const message = JSON.stringify(mapInputToDTO(currentInput));
         const compressedMessage = gzip(encodeUtf8(message));
         sendMessage(compressedMessage);
+
+        //todo: scale other players and food back up after eating a lot
+        if (camera) scaleCameraZoom(gameState.player.radius);
     };
 
     return (
         <>
-            <h2 style={{ marginTop: 25, marginLeft: 25 }}>Score: {gameState.score}</h2>
+            <ScoreDisplay marginLeft={5} zIndex={9999}>
+                Score: {gameState.score}
+            </ScoreDisplay>
             <Canvas
                 //@ts-ignore
                 ref={canvasRef}
                 orthographic
-                camera={{ zoom: 25, position: [0, 0, 100] }}
+                camera={{ zoom: 20, position: [0, 0, 100] }}
             >
-                <ambientLight />
-                {/* pass position and other stuff here, move it from agarnt player  */}
-                <AgarntPlayer
-                    position={[gameState.player.x, gameState.player.y, 0]}
-                    currentRadius={gameState.player.radius}
-                    frameCallback={playerRenderFunc}
-                    playerName={currentPlayerName}
+                <CanvasImage
+                    img={DefaultBackground}
+                    width={gameState.boardSize[0]}
+                    height={gameState.boardSize[1]}
                 />
+                <ambientLight />
                 {
                     /* here we will render all of the other players */
                     gameState.players.map(
@@ -192,23 +186,40 @@ function AgarntPage() {
                             return (
                                 <AgarntPlayer
                                     key={index}
-                                    currentRadius={radius}
-                                    position={[x, y, 0]}
+                                    currentRadius={radius / RADIUS_SCALE_FACTOR}
+                                    position={[
+                                        x / RADIUS_SCALE_FACTOR,
+                                        y / RADIUS_SCALE_FACTOR,
+                                        radius,
+                                    ]}
                                     playerName={name}
                                 />
                             );
                         }
                     )
                 }
+                <AgarntPlayer
+                    position={[
+                        gameState.player.x / RADIUS_SCALE_FACTOR,
+                        gameState.player.y / RADIUS_SCALE_FACTOR,
+                        gameState.player.radius,
+                    ]}
+                    currentRadius={gameState.player.radius / RADIUS_SCALE_FACTOR}
+                    frameCallback={playerRenderFunc}
+                    playerName={currentPlayerName}
+                />
                 {
                     /*and here will be foods*/
                     gameState.food.map((food: number[]) => {
-                        //@ts-ignore
                         return (
                             <RandomColorCircle
                                 key={food.toString()}
                                 args={[FOOD_RADIUS, 32]}
-                                position={[food[0], food[1], 0]}
+                                position={[
+                                    food[0] / RADIUS_SCALE_FACTOR,
+                                    food[1] / RADIUS_SCALE_FACTOR,
+                                    FOOD_RADIUS,
+                                ]}
                             />
                         );
                     })

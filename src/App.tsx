@@ -1,5 +1,5 @@
+//@ts-nocheck
 import React from 'react';
-//@ts-ignore
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import { AboutPage } from './pages/AboutPage';

@@ -14,6 +14,8 @@ import {
     InputsParent,
 } from './styled';
 import { StatusCodes } from 'http-status-codes';
+import { Checkbox } from 'antd';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 interface Props {
     onCancel?: () => void;
@@ -25,6 +27,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const [canJoin, setCanJoin] = useState(false);
     const [gameId, setGameId] = useState('');
     const [playerName, setPlayerName] = useState('');
+    const [isSpectator, setIsSpectator] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [gameType, setGameType] = useState('');
 
@@ -85,7 +88,18 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
             onCancel={onCancel}
             {...modalProps}
         >
-            {redirect && <Redirect to={`/${gameType.toLowerCase()}`} />}
+            {redirect && (
+                <Redirect
+                    to={{
+                        pathname: `/${gameType.toLowerCase()}`,
+                        state: {
+                            isSpectator: isSpectator,
+                            playerName: playerName,
+                            sessionId: gameId,
+                        },
+                    }}
+                />
+            )}
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>Input ongoing game ID to join</h2>
             <InputsParent>
                 <StyledPlayerNameInput
@@ -98,6 +112,12 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                     placeholder="Game key..."
                     maxLength={50}
                 />
+                <Checkbox
+                    onChange={(event: CheckboxChangeEvent) => setIsSpectator(event.target.checked)}
+                    style={{ marginLeft: 10 }}
+                >
+                    Join as spectator
+                </Checkbox>
             </InputsParent>
         </Modal>
     );

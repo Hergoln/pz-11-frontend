@@ -19,13 +19,15 @@ import GameLostScreen from '../../../components/agarnt/GameLostScreen';
 
 import DefaultBackground from '../../../assets/images/default-background.jpeg';
 import CanvasImage from '../../../components/threejs/CanvasImage';
-import { InputMap, mapInputToDTO } from './types';
+import { InputMap, mapInputToDTO, AgarntPageProps } from './types';
 
-function AgarntPage() {
+function AgarntPage(props: AgarntPageProps) {
     const RADIUS_SCALE_FACTOR = 5;
     const FOOD_RADIUS = 0.5 / RADIUS_SCALE_FACTOR;
     const BASE_ZOOM = 100;
     const MIN_ZOOM = 5;
+
+    const { sessionId, playerName, isSpectator } = props.location.state;
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
@@ -36,6 +38,7 @@ function AgarntPage() {
         RIGHT: false,
     });
     const [camera, setCamera] = useState(null);
+    const [spectatedPlayerName, setSpectatedPlayer] = useState(playerName);
 
     const websocketClosed = (state: ReadyState) =>
         state === ReadyState.CLOSING || state === ReadyState.CLOSED;
@@ -132,13 +135,10 @@ function AgarntPage() {
             console.log('server made a fucky wucky UwU'),
     };
 
-    const gameSessionId = localStorage.getItem('agarnt-game-key') || '';
-    const currentPlayerName = localStorage.getItem('player-name') || '';
-
     const websocketUrl = `${
         process.env.REACT_APP_API_WEBSOCKET_SERVER_URL
-    }/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(
-        currentPlayerName
+    }/join_to_game?session_id=${encodeURIComponent(sessionId)}&player_name=${encodeURIComponent(
+        playerName
     )}`;
 
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
@@ -206,7 +206,7 @@ function AgarntPage() {
                     ]}
                     currentRadius={gameState.player.radius / RADIUS_SCALE_FACTOR}
                     frameCallback={playerRenderFunc}
-                    playerName={currentPlayerName}
+                    playerName={playerName}
                 />
                 {
                     /*and here will be foods*/

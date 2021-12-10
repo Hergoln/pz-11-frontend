@@ -11,9 +11,16 @@ interface PlayerProps {
     currentRadius: number;
     playerName: string;
     frameCallback?: RenderCallback;
+    isSpectating?: boolean;
 }
 
-const AgarntPlayer = ({ position, currentRadius, playerName, frameCallback }: PlayerProps) => {
+const AgarntPlayer = ({
+    position,
+    currentRadius,
+    playerName,
+    frameCallback,
+    isSpectating,
+}: PlayerProps) => {
     const nameFont = useMemo(() => {
         return new FontLoader().parse(Roboto); //i know there is useLoader but there was a whole lot of shit going on with this so lets leave it as useMemo
     }, []);
@@ -24,14 +31,18 @@ const AgarntPlayer = ({ position, currentRadius, playerName, frameCallback }: Pl
 
     return (
         <group>
-            <RandomColorCircle args={[currentRadius, 32]} position={position} />
-            <Text
-                displayText={playerName}
-                font={nameFont}
-                size={currentRadius / 3}
-                height={1}
-                position={position}
-            />
+            {!isSpectating && (
+                <>
+                    <RandomColorCircle args={[currentRadius, 32]} position={position} />
+                    <Text
+                        displayText={playerName}
+                        font={nameFont}
+                        size={currentRadius / 3}
+                        height={1}
+                        position={position}
+                    />
+                </>
+            )}
         </group>
     );
 };

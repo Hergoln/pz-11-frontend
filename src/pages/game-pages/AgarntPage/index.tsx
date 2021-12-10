@@ -20,6 +20,7 @@ import GameLostScreen from '../../../components/agarnt/GameLostScreen';
 import DefaultBackground from '../../../assets/images/default-background.jpeg';
 import CanvasImage from '../../../components/threejs/CanvasImage';
 import { InputMap, mapInputToDTO, AgarntPageProps } from './types';
+import SpectatedPlayerSwitch from '../../../components/agarnt/SpectatedPlayerSwitch';
 
 function AgarntPage(props: AgarntPageProps) {
     const RADIUS_SCALE_FACTOR = 5;
@@ -38,7 +39,11 @@ function AgarntPage(props: AgarntPageProps) {
         RIGHT: false,
     });
     const [camera, setCamera] = useState(null);
-    const [spectatedPlayerName, setSpectatedPlayer] = useState(playerName);
+    const [spectatedPlayerName, setSpectatedPlayer] = useState('');
+
+    if (!spectatedPlayerName && gameState.players.length > 0) {
+        setSpectatedPlayer(gameState.players[0].name);
+    }
 
     const websocketClosed = (state: ReadyState) =>
         state === ReadyState.CLOSING || state === ReadyState.CLOSED;
@@ -128,8 +133,8 @@ function AgarntPage(props: AgarntPageProps) {
     }
 
     const websocketOptions = {
-        onOpen: initGameListeners,
-        onClose: cleanupGameListeners,
+        onOpen: !isSpectator ? initGameListeners : null,
+        onClose: !isSpectator ? cleanupGameListeners : null,
         onMessage: handleGameMessage,
         onError: (_event: WebSocketEventMap['error']) =>
             console.log('server made a fucky wucky UwU'),
@@ -141,6 +146,7 @@ function AgarntPage(props: AgarntPageProps) {
         playerName
     )}`;
 
+    //@ts-ignore
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
 
     const scaleCameraZoom = (radius: number) => {
@@ -154,19 +160,36 @@ function AgarntPage(props: AgarntPageProps) {
         if (!!!camera) {
             setCamera(state.camera);
         }
-        const message = JSON.stringify(mapInputToDTO(currentInput));
-        const compressedMessage = gzip(encodeUtf8(message));
-        sendMessage(compressedMessage);
+        if (!isSpectator) {
+            const message = JSON.stringify(mapInputToDTO(currentInput));
+            const compressedMessage = gzip(encodeUtf8(message));
+            sendMessage(compressedMessage);
+        }
 
         //todo: scale other players and food back up after eating a lot
-        if (camera) scaleCameraZoom(gameState.player.radius);
+        if (camera) {
+            scaleCameraZoom(
+                !isSpectator
+                    ? gameState.player.radius
+                    : gameState.players.find((p: AgarntPlayerState) => p.name)?.radius ?? 1
+            );
+        }
     };
 
     return (
         <>
-            <ScoreDisplay marginLeft={5} zIndex={9999}>
-                Score: {gameState.score}
-            </ScoreDisplay>
+            {!isSpectator && (
+                <ScoreDisplay marginLeft={5} zIndex={9999}>
+                    Score: {gameState.score}
+                </ScoreDisplay>
+            )}
+            {isSpectator && (
+                <SpectatedPlayerSwitch
+                    currentSpectatedName={spectatedPlayerName}
+                    playerNames={gameState.players.map((p: AgarntPlayerState) => p.name)}
+                    spectatedSetter={setSpectatedPlayer}
+                />
+            )}
             <Canvas
                 //@ts-ignore
                 ref={canvasRef}
@@ -193,6 +216,11 @@ function AgarntPage(props: AgarntPageProps) {
                                         radius,
                                     ]}
                                     playerName={name}
+                                    frameCallback={
+                                        isSpectator && name === spectatedPlayerName
+                                            ? playerRenderFunc
+                                            : undefined
+                                    }
                                 />
                             );
                         }
@@ -205,8 +233,9 @@ function AgarntPage(props: AgarntPageProps) {
                         gameState.player.radius,
                     ]}
                     currentRadius={gameState.player.radius / RADIUS_SCALE_FACTOR}
-                    frameCallback={playerRenderFunc}
+                    frameCallback={isSpectator ? undefined : playerRenderFunc}
                     playerName={playerName}
+                    isSpectating={isSpectator}
                 />
                 {
                     /*and here will be foods*/

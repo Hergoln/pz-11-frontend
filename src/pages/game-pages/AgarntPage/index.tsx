@@ -73,10 +73,23 @@ function AgarntPage(props: AgarntPageProps) {
             const newStateDTO: AgarntStateDTO = JSON.parse(decodeUtf8(ungzip(message)));
             const newState = mapAgarntDTOToState(newStateDTO);
             if (camera && newState) {
-                //@ts-ignore
-                camera.position.x = newState.player.x / RADIUS_SCALE_FACTOR;
-                //@ts-ignore
-                camera.position.y = newState.player.y / RADIUS_SCALE_FACTOR;
+                if (!isSpectator) {
+                    //@ts-ignore
+                    camera.position.x = newState.player.x / RADIUS_SCALE_FACTOR;
+                    //@ts-ignore
+                    camera.position.y = newState.player.y / RADIUS_SCALE_FACTOR;
+                } else {
+                    const target =
+                        newState.players.find(
+                            (p: AgarntPlayerState) => p.name === spectatedPlayerName
+                        ) ?? (gameState.players.length > 0 ? gameState.players[0] : undefined);
+                    if (target) {
+                        //@ts-ignore
+                        camera.position.x = target.x / RADIUS_SCALE_FACTOR;
+                        //@ts-ignore
+                        camera.position.y = target.y / RADIUS_SCALE_FACTOR;
+                    }
+                }
             }
             setGameState(newState);
         }

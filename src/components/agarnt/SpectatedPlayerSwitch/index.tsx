@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import { clampWrapping } from '../../../global/util/mathUtils';
 //@ts-ignore
 import styled from 'styled-components';
+import { DecoratedBox, SpectatedPlayerNameText } from './styled';
 
 interface SwitchProps {
     spectatedSetter: (newName: string) => void;
@@ -12,20 +13,12 @@ interface SwitchProps {
     currentSpectatedName: string;
 }
 
-const DecoratedBox = styled(Box)`
-    display: block;
-    position: absolute;
-    z-index: 999;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-`;
-
-const Component = ({ currentSpectatedName, playerNames, spectatedSetter }: SwitchProps) => {
-    const currentIndex = playerNames.findIndex(
-        (name: string, index: number) => playerNames[index] === name
-    );
+const SpectatedPlayerSwitch = ({
+    currentSpectatedName,
+    playerNames,
+    spectatedSetter,
+}: SwitchProps) => {
+    const currentIndex = playerNames.findIndex((name: string) => name === currentSpectatedName);
 
     const selectionDisabled = playerNames.length <= 1;
 
@@ -33,31 +26,23 @@ const Component = ({ currentSpectatedName, playerNames, spectatedSetter }: Switc
         <DecoratedBox>
             <Box display="flex" flexDirection="row" justifyContent="center">
                 <Button
-                    onClick={() =>
+                    onClick={() => {
                         spectatedSetter(
-                            playerNames[clampWrapping(currentIndex - 1, 0, playerNames.length)]
-                        )
-                    }
+                            playerNames[clampWrapping(currentIndex - 1, 0, playerNames.length - 1)]
+                        );
+                    }}
                     disabled={selectionDisabled}
                     style={{ color: 'black' }}
                 >
                     {'<'}
                 </Button>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignContent: 'center',
-                        flexDirection: 'column',
-                        marginTop: 10,
-                    }}
-                >
+                <SpectatedPlayerNameText>
                     <h3>{currentSpectatedName}</h3>
-                </div>
+                </SpectatedPlayerNameText>
                 <Button
                     onClick={() => {
                         spectatedSetter(
-                            playerNames[clampWrapping(currentIndex + 1, 0, playerNames.length)]
+                            playerNames[clampWrapping(currentIndex + 1, 0, playerNames.length - 1)]
                         );
                     }}
                     disabled={selectionDisabled}
@@ -69,11 +54,5 @@ const Component = ({ currentSpectatedName, playerNames, spectatedSetter }: Switc
         </DecoratedBox>
     );
 };
-
-const SpectatedPlayerSwitch = styled(Component)`
-    font-weight: bold;
-    font-size: 20px;
-    top: 10px;
-`;
 
 export default SpectatedPlayerSwitch;

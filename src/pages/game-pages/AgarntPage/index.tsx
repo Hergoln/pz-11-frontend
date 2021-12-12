@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
-import { ScoreDisplay } from './styled';
+import { ScoreDisplay, SessionIDDisplay } from './styled';
 import AgarntPlayer from '../../../components/agarnt/AgarntPlayer';
 import {
     AgarntPlayerState,
@@ -89,6 +89,7 @@ function AgarntPage(props: AgarntPageProps) {
                         camera.position.x = target.x / RADIUS_SCALE_FACTOR;
                         //@ts-ignore
                         camera.position.y = target.y / RADIUS_SCALE_FACTOR;
+                        setSpectatedPlayer(target.name);
                     }
                 }
             }
@@ -194,11 +195,7 @@ function AgarntPage(props: AgarntPageProps) {
 
     return (
         <>
-            {!isSpectator && (
-                <ScoreDisplay marginLeft={5} zIndex={9999}>
-                    Score: {gameState.score}
-                </ScoreDisplay>
-            )}
+            {!isSpectator && <ScoreDisplay marginLeft={5}>Score: {gameState.score}</ScoreDisplay>}
             {isSpectator && (
                 <SpectatedPlayerSwitch
                     currentSpectatedName={spectatedPlayerName}
@@ -206,6 +203,7 @@ function AgarntPage(props: AgarntPageProps) {
                     spectatedSetter={setSpectatedPlayer}
                 />
             )}
+            <SessionIDDisplay paddingRight={2.5}>Session ID: {sessionId}</SessionIDDisplay>
             <Canvas
                 //@ts-ignore
                 ref={canvasRef}
@@ -276,13 +274,15 @@ function AgarntPage(props: AgarntPageProps) {
                     })
                 }
             </Canvas>
-            <GameLostScreen
-                playerScore={gameState.score}
-                open={websocketClosed(readyState)}
-                onRetry={() => window.location.reload()}
-                waitTime={5}
-                gameLostText="You were eaten!"
-            />
+            {!isSpectator && (
+                <GameLostScreen
+                    playerScore={gameState.score}
+                    open={websocketClosed(readyState)}
+                    onRetry={() => window.location.reload()}
+                    waitTime={5}
+                    gameLostText="You were eaten!"
+                />
+            )}
         </>
     );
 }

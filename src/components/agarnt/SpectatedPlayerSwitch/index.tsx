@@ -24,7 +24,7 @@ const SpectatedPlayerSwitch = ({
 
     return (
         <DecoratedBox>
-            <Box display="flex" flexDirection="row" justifyContent="center">
+            <Box display="flex" flexDirection="row" justifyContent="center" gap={10}>
                 <Button
                     onClick={() => {
                         spectatedSetter(
@@ -33,6 +33,7 @@ const SpectatedPlayerSwitch = ({
                     }}
                     disabled={selectionDisabled}
                     style={{ color: 'black' }}
+                    disableRipple={true}
                 >
                     {'<'}
                 </Button>
@@ -47,6 +48,7 @@ const SpectatedPlayerSwitch = ({
                     }}
                     disabled={selectionDisabled}
                     style={{ color: 'black' }}
+                    disableRipple={true}
                 >
                     {'>'}
                 </Button>

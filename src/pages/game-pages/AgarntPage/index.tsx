@@ -21,6 +21,7 @@ import DefaultBackground from '../../../assets/images/default-background.jpeg';
 import CanvasImage from '../../../components/threejs/CanvasImage';
 import { InputMap, mapInputToDTO, AgarntPageProps } from './types';
 import SpectatedPlayerSwitch from '../../../components/agarnt/SpectatedPlayerSwitch';
+import { capitalize } from '../../../global/util/stringOperations';
 
 function AgarntPage(props: AgarntPageProps) {
     const RADIUS_SCALE_FACTOR = 5;
@@ -157,7 +158,9 @@ function AgarntPage(props: AgarntPageProps) {
         process.env.REACT_APP_API_WEBSOCKET_SERVER_URL
     }/join_to_game?session_id=${encodeURIComponent(sessionId)}&player_name=${encodeURIComponent(
         playerName
-    )}`;
+    )}&is_spectator=${capitalize(isSpectator.toString())}`;
+
+    console.log(websocketUrl);
 
     //@ts-ignore
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
@@ -183,7 +186,7 @@ function AgarntPage(props: AgarntPageProps) {
         if (camera) {
             scaleCameraZoom(
                 !isSpectator
-                    ? gameState.player.radius
+                    ? gameState.player?.radius ?? 1
                     : gameState.players.find((p: AgarntPlayerState) => p.name)?.radius ?? 1
             );
         }
@@ -239,17 +242,23 @@ function AgarntPage(props: AgarntPageProps) {
                         }
                     )
                 }
+
                 <AgarntPlayer
                     position={[
-                        gameState.player.x / RADIUS_SCALE_FACTOR,
-                        gameState.player.y / RADIUS_SCALE_FACTOR,
-                        gameState.player.radius,
+                        //@ts-ignore
+                        (gameState?.player?.x ?? 0) / RADIUS_SCALE_FACTOR,
+                        //@ts-ignore
+                        (gameState?.player?.y ?? 0) / RADIUS_SCALE_FACTOR,
+                        //@ts-ignore
+                        gameState?.player?.radius ?? 1,
                     ]}
-                    currentRadius={gameState.player.radius / RADIUS_SCALE_FACTOR}
+                    //@ts-ignore
+                    currentRadius={(gameState?.player?.radius ?? 1) / RADIUS_SCALE_FACTOR}
                     frameCallback={isSpectator ? undefined : playerRenderFunc}
                     playerName={playerName}
                     isSpectating={isSpectator}
                 />
+
                 {
                     /*and here will be foods*/
                     gameState.food.map((food: number[]) => {

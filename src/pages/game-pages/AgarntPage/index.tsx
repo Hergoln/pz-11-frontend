@@ -90,6 +90,8 @@ function AgarntPage(props: AgarntPageProps) {
                         //@ts-ignore
                         camera.position.y = target.y / RADIUS_SCALE_FACTOR;
                         setSpectatedPlayer(target.name);
+                    } else {
+                        setSpectatedPlayer('');
                     }
                 }
             }

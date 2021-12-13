@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
-import { ScoreDisplay } from './styled';
+import { ScoreDisplay, SessionIDDisplay } from './styled';
 import AgarntPlayer from '../../../components/agarnt/AgarntPlayer';
 import {
     AgarntPlayerState,
@@ -19,13 +19,17 @@ import GameLostScreen from '../../../components/agarnt/GameLostScreen';
 
 import DefaultBackground from '../../../assets/images/default-background.jpeg';
 import CanvasImage from '../../../components/threejs/CanvasImage';
-import { InputMap, mapInputToDTO } from './types';
+import { InputMap, mapInputToDTO, AgarntPageProps } from './types';
+import SpectatedPlayerSwitch from '../../../components/agarnt/SpectatedPlayerSwitch';
+import { capitalize } from '../../../global/util/stringOperations';
 
-function AgarntPage() {
+function AgarntPage(props: AgarntPageProps) {
     const RADIUS_SCALE_FACTOR = 5;
     const FOOD_RADIUS = 0.5 / RADIUS_SCALE_FACTOR;
     const BASE_ZOOM = 100;
     const MIN_ZOOM = 5;
+
+    const { sessionId, playerName, isSpectator } = props.location.state;
 
     const canvasRef = useRef();
     const [gameState, setGameState] = useState<AgarntState>(INITIAL_STATE);
@@ -36,6 +40,11 @@ function AgarntPage() {
         RIGHT: false,
     });
     const [camera, setCamera] = useState(null);
+    const [spectatedPlayerName, setSpectatedPlayer] = useState('');
+
+    if (!spectatedPlayerName && gameState.players.length > 0) {
+        setSpectatedPlayer(gameState.players[0].name);
+    }
 
     const websocketClosed = (state: ReadyState) =>
         state === ReadyState.CLOSING || state === ReadyState.CLOSED;
@@ -65,10 +74,26 @@ function AgarntPage() {
             const newStateDTO: AgarntStateDTO = JSON.parse(decodeUtf8(ungzip(message)));
             const newState = mapAgarntDTOToState(newStateDTO);
             if (camera && newState) {
-                //@ts-ignore
-                camera.position.x = newState.player.x / RADIUS_SCALE_FACTOR;
-                //@ts-ignore
-                camera.position.y = newState.player.y / RADIUS_SCALE_FACTOR;
+                if (!isSpectator) {
+                    //@ts-ignore
+                    camera.position.x = newState.player.x / RADIUS_SCALE_FACTOR;
+                    //@ts-ignore
+                    camera.position.y = newState.player.y / RADIUS_SCALE_FACTOR;
+                } else {
+                    const target =
+                        newState.players.find(
+                            (p: AgarntPlayerState) => p.name === spectatedPlayerName
+                        ) ?? (gameState.players.length > 0 ? gameState.players[0] : undefined);
+                    if (target) {
+                        //@ts-ignore
+                        camera.position.x = target.x / RADIUS_SCALE_FACTOR;
+                        //@ts-ignore
+                        camera.position.y = target.y / RADIUS_SCALE_FACTOR;
+                        setSpectatedPlayer(target.name);
+                    } else {
+                        setSpectatedPlayer('');
+                    }
+                }
             }
             setGameState(newState);
         }
@@ -125,22 +150,22 @@ function AgarntPage() {
     }
 
     const websocketOptions = {
-        onOpen: initGameListeners,
-        onClose: cleanupGameListeners,
+        onOpen: !isSpectator ? initGameListeners : null,
+        onClose: !isSpectator ? cleanupGameListeners : null,
         onMessage: handleGameMessage,
         onError: (_event: WebSocketEventMap['error']) =>
             console.log('server made a fucky wucky UwU'),
     };
 
-    const gameSessionId = localStorage.getItem('agarnt-game-key') || '';
-    const currentPlayerName = localStorage.getItem('player-name') || '';
-
     const websocketUrl = `${
         process.env.REACT_APP_API_WEBSOCKET_SERVER_URL
-    }/join_to_game?session_id=${encodeURIComponent(gameSessionId)}&player_name=${encodeURIComponent(
-        currentPlayerName
-    )}`;
+    }/join_to_game?session_id=${encodeURIComponent(sessionId)}&player_name=${encodeURIComponent(
+        playerName
+    )}&is_spectator=${capitalize(isSpectator.toString())}`;
 
+    console.log(websocketUrl);
+
+    //@ts-ignore
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
 
     const scaleCameraZoom = (radius: number) => {
@@ -154,19 +179,33 @@ function AgarntPage() {
         if (!!!camera) {
             setCamera(state.camera);
         }
-        const message = JSON.stringify(mapInputToDTO(currentInput));
-        const compressedMessage = gzip(encodeUtf8(message));
-        sendMessage(compressedMessage);
+        if (!isSpectator) {
+            const message = JSON.stringify(mapInputToDTO(currentInput));
+            const compressedMessage = gzip(encodeUtf8(message));
+            sendMessage(compressedMessage);
+        }
 
         //todo: scale other players and food back up after eating a lot
-        if (camera) scaleCameraZoom(gameState.player.radius);
+        if (camera) {
+            scaleCameraZoom(
+                !isSpectator
+                    ? gameState.player?.radius ?? 1
+                    : gameState.players.find((p: AgarntPlayerState) => p.name)?.radius ?? 1
+            );
+        }
     };
 
     return (
         <>
-            <ScoreDisplay marginLeft={5} zIndex={9999}>
-                Score: {gameState.score}
-            </ScoreDisplay>
+            {!isSpectator && <ScoreDisplay marginLeft={5}>Score: {gameState.score}</ScoreDisplay>}
+            {isSpectator && (
+                <SpectatedPlayerSwitch
+                    currentSpectatedName={spectatedPlayerName}
+                    playerNames={gameState.players.map((p: AgarntPlayerState) => p.name)}
+                    spectatedSetter={setSpectatedPlayer}
+                />
+            )}
+            <SessionIDDisplay paddingRight={2.5}>Session ID: {sessionId}</SessionIDDisplay>
             <Canvas
                 //@ts-ignore
                 ref={canvasRef}
@@ -193,21 +232,33 @@ function AgarntPage() {
                                         radius,
                                     ]}
                                     playerName={name}
+                                    frameCallback={
+                                        isSpectator && name === spectatedPlayerName
+                                            ? playerRenderFunc
+                                            : undefined
+                                    }
                                 />
                             );
                         }
                     )
                 }
+
                 <AgarntPlayer
                     position={[
-                        gameState.player.x / RADIUS_SCALE_FACTOR,
-                        gameState.player.y / RADIUS_SCALE_FACTOR,
-                        gameState.player.radius,
+                        //@ts-ignore
+                        (gameState?.player?.x ?? 0) / RADIUS_SCALE_FACTOR,
+                        //@ts-ignore
+                        (gameState?.player?.y ?? 0) / RADIUS_SCALE_FACTOR,
+                        //@ts-ignore
+                        gameState?.player?.radius ?? 1,
                     ]}
-                    currentRadius={gameState.player.radius / RADIUS_SCALE_FACTOR}
-                    frameCallback={playerRenderFunc}
-                    playerName={currentPlayerName}
+                    //@ts-ignore
+                    currentRadius={(gameState?.player?.radius ?? 1) / RADIUS_SCALE_FACTOR}
+                    frameCallback={isSpectator ? undefined : playerRenderFunc}
+                    playerName={playerName}
+                    isSpectating={isSpectator}
                 />
+
                 {
                     /*and here will be foods*/
                     gameState.food.map((food: number[]) => {
@@ -225,13 +276,15 @@ function AgarntPage() {
                     })
                 }
             </Canvas>
-            <GameLostScreen
-                playerScore={gameState.score}
-                open={websocketClosed(readyState)}
-                onRetry={() => window.location.reload()}
-                waitTime={5}
-                gameLostText="You were eaten!"
-            />
+            {!isSpectator && (
+                <GameLostScreen
+                    playerScore={gameState.score}
+                    open={websocketClosed(readyState)}
+                    onRetry={() => window.location.reload()}
+                    waitTime={5}
+                    gameLostText="You were eaten!"
+                />
+            )}
         </>
     );
 }

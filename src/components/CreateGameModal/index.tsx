@@ -18,6 +18,8 @@ import GameConfigAccordion from '../GameConfigAccordion';
 
 import { mapResponseToConfig, mapConfigToResponse } from '../../global/config/types';
 import { capitalize } from '../../global/util/stringOperations';
+import { Checkbox } from 'antd';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 interface Props {
     onCreateGame?: (id: string) => void;
@@ -34,6 +36,7 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
     const [playerName, setPlayerName] = useState('');
     const [copyTooltipText, setCopyTooltipText] = useState('Copy to clipboard');
     const [redirect, setRedirect] = useState(false);
+    const [isSpectator, setIsSpectator] = useState(false);
     const [config, setConfig] = useState({ variables: {} });
 
     const fetchConfigForGame = async (gameType: string) => {
@@ -155,7 +158,18 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             onCancel={onCancel}
             {...modalProps}
         >
-            {redirect && <Redirect to={`/${gameType.toLowerCase()}`} />}
+            {redirect && (
+                <Redirect
+                    to={{
+                        pathname: `/${gameType.toLowerCase()}`,
+                        state: {
+                            isSpectator: isSpectator,
+                            playerName: playerName,
+                            sessionId: gameKey,
+                        },
+                    }}
+                />
+            )}
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>
                 Copy code and share with your friends
             </h2>
@@ -204,6 +218,16 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
                     variant="standard"
                     value={gameKey}
                 />
+                {gameCreated && (
+                    <Checkbox
+                        onChange={(event: CheckboxChangeEvent) =>
+                            setIsSpectator(event.target.checked)
+                        }
+                        style={{ marginLeft: 10 }}
+                    >
+                        Join as spectator
+                    </Checkbox>
+                )}
                 {gameType && !gameCreated && <GameConfigAccordion gameConfig={config} />}
             </div>
         </Modal>

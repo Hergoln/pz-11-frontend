@@ -25,5 +25,19 @@ const mapInputToDTO = (data: InputMap): InputMapDTO => {
     };
 };
 
-export type { InputMap, InputMapDTO };
+interface AgarntPageState {
+    isSpectator: boolean;
+    playerName: string;
+    sessionId: string;
+}
+
+interface AgarntLocation {
+    state: AgarntPageState;
+}
+
+interface AgarntPageProps {
+    location: AgarntLocation;
+}
+
+export type { InputMap, InputMapDTO, AgarntPageProps };
 export { mapInputToDTO };

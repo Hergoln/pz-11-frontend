@@ -8,6 +8,16 @@ const ScoreDisplay = styled(Box)`
     display: block;
     width: 100%;
     top: 10px;
+    z-index: 9999;
 `;
 
-export { ScoreDisplay };
+const SessionIDDisplay = styled(Box)`
+    display: block;
+    position: absolute;
+    width: 100%;
+    top: 10px;
+    text-align: right;
+    z-index: 9999;
+`;
+
+export { ScoreDisplay, SessionIDDisplay };

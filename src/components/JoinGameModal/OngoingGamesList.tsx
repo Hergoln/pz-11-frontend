@@ -31,13 +31,16 @@ export const OngoingGamesList = ({...inputProps }: Props) => {
         const fetchUrl = `${
             process.env.REACT_APP_API_SERVER_URL
         }/games/`;
-        const response = await axios.get(fetchUrl)
-        if(response.status == StatusCodes.OK) {
-            const gamez :Game[] = mapResponseToGames(response.data);
-            setOngoingGames(gamez);
-        } else {
-            toast.error('Error while fetching ongoing games data from the server. Cause: ' + response.statusText);
-        }
+        await axios.get(fetchUrl).then((response) =>
+            {
+                if(response.status == StatusCodes.OK) {
+                    const gamez :Game[] = mapResponseToGames(response.data);
+                    setOngoingGames(gamez);
+                }
+            }
+        ).catch((error) => {
+            toast.error('Error while fetching ongoing games data from the server. Cause: ' + error);
+        })
     }
 
     const copyToClipboard = (session_id:string) => {

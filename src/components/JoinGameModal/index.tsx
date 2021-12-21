@@ -16,6 +16,8 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { OngoingGamesList } from './OngoingGamesList'
+
 
 interface Props {
     onCancel?: () => void;
@@ -118,6 +120,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                 >
                     Join as spectator
                 </Checkbox>
+                <OngoingGamesList/>
             </InputsParent>
         </Modal>
     );

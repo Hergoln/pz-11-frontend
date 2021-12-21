@@ -5,9 +5,6 @@ import axios from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import { toast } from 'react-toastify';
 
-interface Props {
-  [x: string]: any;
-}
 
 interface Game {
     session_id: string;
@@ -16,26 +13,21 @@ interface Game {
     max_number_of_players?: number;
 }
 
-export const OngoingGamesList = ({...inputProps }: Props) => {
+export const OngoingGamesList = () => {
     const [ongoingGames, setOngoingGames] = useState(Array<Game>());
 
     const mapResponseToGames = (data: any): Game[] => {
-        var gamez :Game[] = [];
-        data?.forEach((element: any) => {
-            gamez.push(element);
-        });
-        return gamez;
+        return data ?? [];
     }
 
     const fetchOngoingGames = async () => {
         const fetchUrl = `${
             process.env.REACT_APP_API_SERVER_URL
         }/games/`;
-        await axios.get(fetchUrl).then((response) =>
+        axios.get(fetchUrl).then((response) =>
             {
                 if(response.status == StatusCodes.OK) {
-                    const gamez :Game[] = mapResponseToGames(response.data);
-                    setOngoingGames(gamez);
+                    setOngoingGames(mapResponseToGames(response.data));
                 }
             }
         ).catch((error) => {
@@ -70,13 +62,13 @@ export const OngoingGamesList = ({...inputProps }: Props) => {
                                 <ClipboardIcon
                                     width={24}
                                     height={24}
-                                    onClick={() => {copyToClipboard(item.session_id)}}
+                                    onClick={() => copyToClipboard(item.session_id)}
                                     cursor="pointer"
                                 />
                             </Tooltip>
                             <ListItemText primary={item?.game_type} style={listItemShorterStyle}/>
                             <ListItemText 
-                                primary={item?.number_of_players + '/' + item?.max_number_of_players} 
+                                primary={item?.max_number_of_players ? `${item?.number_of_players}/${item?.max_number_of_players}` : item?.number_of_players}
                                 style={listItemShorterStyle}/>
                         </ListItemButton>
                     );

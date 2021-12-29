@@ -92,7 +92,7 @@ const mergeAgarntStates = (oldState: AgarntState, newState: AgarntState): Agarnt
         score: newState.score,
         boardSize: newState.boardSize,
         food: (newState.food ?? []).length > 0 ? newState.food : oldState.food,
-        player: newState.player ?? undefined,
+        player: newState.player,
     };
 };
 

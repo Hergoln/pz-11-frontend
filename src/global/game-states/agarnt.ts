@@ -45,17 +45,17 @@ interface AgarntState {
 interface AgarntStateDTO {
     ps: AgarntPlayerStateDTO[];
     p?: AgarntPlayerStateDTO;
-    f: number[][];
+    f?: number[][];
     s: number;
     b: number[];
 }
 
 const mapAgarntDTOToState = (data: AgarntStateDTO): AgarntState => {
     const state = {
-        food: data.f,
         players: data.ps.map(mapAgarntPlayerDTOToState),
         score: data.s,
         boardSize: data.b,
+        food: data.f || [],
     };
     if (data.p) {
         //@ts-ignore
@@ -86,6 +86,16 @@ const mapAgarntStateToDTO = (data: AgarntState): AgarntStateDTO => {
     return state;
 };
 
+const mergeAgarntStates = (oldState: AgarntState, newState: AgarntState): AgarntState => {
+    return {
+        players: newState.players,
+        score: newState.score,
+        boardSize: newState.boardSize,
+        food: (newState.food ?? []).length > 0 ? newState.food : oldState.food,
+        player: newState.player ?? undefined,
+    };
+};
+
 const INITIAL_STATE: AgarntState = {
     player: { x: 0, y: 0, radius: 1, name: '', isDefeated: false },
     players: [],
@@ -101,4 +111,5 @@ export {
     mapAgarntDTOToState,
     mapAgarntPlayerStateToDTO,
     mapAgarntStateToDTO,
+    mergeAgarntStates,
 };

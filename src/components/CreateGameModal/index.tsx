@@ -104,23 +104,28 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             toast.error('Please input your player name!', { autoClose: 1500 });
             return;
         }
-        const response = await axios.get(
-            `${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`
-        );
-        switch (response.status) {
-            case StatusCodes.OK:
-                toast.info('Game key correct! Redirecting...', { autoClose: 1000 });
-                setRedirect(true);
-                break;
-            case StatusCodes.NOT_ACCEPTABLE:
-                toast.error(`Player called "${playerName} already exists!"`);
-                break;
-            case StatusCodes.NOT_FOUND:
-                toast.error(`Session with ID=${gameKey} does not exist!`);
-                break;
-            default:
-                toast.error('An unknown error has occurred. Please contact our support.');
-                break;
+
+        try {
+            await axios.get(
+                `${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}/${encodeURIComponent(
+                    playerName
+                )}`
+            );
+        } catch (error) {
+            //@ts-ignore
+            toast.error(error.response.data.message);
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`
+            );
+            toast.info('Game key correct! Redirecting...', { autoClose: 1000 });
+            setRedirect(true);
+        } catch (error) {
+            //@ts-ignore
+            toast.error(error.response.data.message);
         }
     };
 

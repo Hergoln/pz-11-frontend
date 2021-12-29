@@ -163,8 +163,6 @@ function AgarntPage(props: AgarntPageProps) {
         playerName
     )}&is_spectator=${capitalize(isSpectator.toString())}`;
 
-    console.log(websocketUrl);
-
     //@ts-ignore
     const { sendMessage, readyState } = useWebSocket(websocketUrl, websocketOptions);
 

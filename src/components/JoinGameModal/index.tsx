@@ -16,8 +16,7 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { OngoingGamesList } from './OngoingGamesList'
-
+import { OngoingGamesList } from './OngoingGamesList';
 
 interface Props {
     onCancel?: () => void;
@@ -36,15 +35,22 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
     const handleJoinGame = async () => {
         setIsLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
-        if (response.status === StatusCodes.OK) {
-            toast.success('Game key correct! Redirecting...', { autoClose: 1000 });
-            localStorage.setItem('player-name', playerName);
-            localStorage.setItem('agarnt-game-key', gameId);
-            //@ts-ignore
-            setGameType(response.data.game_type);
-            setRedirect(true);
-        } else {
-            toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        switch (response.status) {
+            case StatusCodes.OK:
+                toast.info('Game key correct! Redirecting...', { autoClose: 1000 });
+                //@ts-ignore
+                setGameType(response.data.game_type);
+                setRedirect(true);
+                break;
+            case StatusCodes.NOT_ACCEPTABLE:
+                toast.error(`Player called "${playerName} already exists!"`);
+                break;
+            case StatusCodes.NOT_FOUND:
+                toast.error(`Session with ID=${gameId} does not exist!`);
+                break;
+            default:
+                toast.error('An unknown error has occurred. Please contact our support.');
+                break;
         }
         setIsLoading(false);
     };
@@ -120,7 +126,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                 >
                     Join as spectator
                 </Checkbox>
-                <OngoingGamesList/>
+                <OngoingGamesList />
             </InputsParent>
         </Modal>
     );

@@ -107,13 +107,20 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
         const response = await axios.get(
             `${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`
         );
-        if (response.status === StatusCodes.OK) {
-            toast.info('Game key correct! Redirecting...', { autoClose: 1000 });
-            localStorage.setItem('player-name', playerName);
-            localStorage.setItem('agarnt-game-key', gameKey);
-            setRedirect(true);
-        } else {
-            toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        switch (response.status) {
+            case StatusCodes.OK:
+                toast.info('Game key correct! Redirecting...', { autoClose: 1000 });
+                setRedirect(true);
+                break;
+            case StatusCodes.NOT_ACCEPTABLE:
+                toast.error(`Player called "${playerName} already exists!"`);
+                break;
+            case StatusCodes.NOT_FOUND:
+                toast.error(`Session with ID=${gameKey} does not exist!`);
+                break;
+            default:
+                toast.error('An unknown error has occurred. Please contact our support.');
+                break;
         }
     };
 

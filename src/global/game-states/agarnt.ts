@@ -89,7 +89,7 @@ const mapAgarntStateToDTO = (data: AgarntState): AgarntStateDTO => {
 const mergeAgarntStates = (oldState: AgarntState, newState: AgarntState): AgarntState => {
     return {
         players: newState.players,
-        score: newState.score,
+        score: newState.score ? newState.score : oldState.score,
         boardSize: (newState.boardSize ?? []).length > 0 ? newState.boardSize : oldState.boardSize,
         food: (newState.food ?? []).length > 0 ? newState.food : oldState.food,
         player: newState.player,

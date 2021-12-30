@@ -90,7 +90,7 @@ const mergeAgarntStates = (oldState: AgarntState, newState: AgarntState): Agarnt
     return {
         players: newState.players,
         score: newState.score,
-        boardSize: newState.boardSize,
+        boardSize: (newState.boardSize ?? []).length > 0 ? newState.boardSize : oldState.boardSize,
         food: (newState.food ?? []).length > 0 ? newState.food : oldState.food,
         player: newState.player,
     };

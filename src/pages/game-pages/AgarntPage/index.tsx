@@ -195,6 +195,9 @@ function AgarntPage(props: AgarntPageProps) {
         }
     };
 
+    const formattedPlayerPosition = (player: AgarntPlayerState | undefined) => 
+        `(${player?.x.toFixed(3)}, ${player?.y.toFixed(3)})`;
+
     return (
         <>
             {!isSpectator && <ScoreDisplay marginLeft={5}>Score: {gameState.score}</ScoreDisplay>}
@@ -290,8 +293,7 @@ function AgarntPage(props: AgarntPageProps) {
             <PositionDisplay>
                 {!isSpectator ? 
                     `(${gameState.player?.x.toFixed(3)}, ${gameState.player?.y.toFixed(3)})` :
-                `(${gameState.players.find((p: AgarntPlayerState) => p.name == spectatedPlayerName)?.x.toFixed(3)},
-                 ${gameState.players.find((p: AgarntPlayerState) => p.name == spectatedPlayerName)?.y.toFixed(3)})`}
+                formattedPlayerPosition(gameState.players.find((p: AgarntPlayerState) => p.name == spectatedPlayerName))}
             </PositionDisplay>
             }
         </>

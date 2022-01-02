@@ -10,6 +10,7 @@ import {
     AgarntStateDTO,
     INITIAL_STATE,
     mapAgarntDTOToState,
+    mergeAgarntStates,
 } from '../../../global/game-states/agarnt';
 import RandomColorCircle from '../../../components/agarnt/RandomColorCircle';
 import encodeUtf8 from '../../../global/util/encodeUtf8';
@@ -95,7 +96,7 @@ function AgarntPage(props: AgarntPageProps) {
                     }
                 }
             }
-            setGameState(newState);
+            setGameState(mergeAgarntStates(gameState, newState));
         }
     }
 

@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, RenderCallback } from '@react-three/fiber';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
-import { ScoreDisplay, SessionIDDisplay } from './styled';
+import { ScoreDisplay, SessionIDDisplay, PositionDisplay } from './styled';
 import AgarntPlayer from '../../../components/agarnt/AgarntPlayer';
 import {
     AgarntPlayerState,
@@ -196,6 +196,9 @@ function AgarntPage(props: AgarntPageProps) {
         }
     };
 
+    const formattedPlayerPosition = (player: AgarntPlayerState | undefined) => 
+        `(${player?.x.toFixed(3)}, ${player?.y.toFixed(3)})`;
+
     return (
         <>
             {!isSpectator && <ScoreDisplay marginLeft={5}>Score: {gameState.score}</ScoreDisplay>}
@@ -286,6 +289,14 @@ function AgarntPage(props: AgarntPageProps) {
                     gameLostText="You were eaten!"
                 />
             )}
+
+            {
+            <PositionDisplay>
+                {!isSpectator ? 
+                    `(${gameState.player?.x.toFixed(3)}, ${gameState.player?.y.toFixed(3)})` :
+                formattedPlayerPosition(gameState.players.find((p: AgarntPlayerState) => p.name == spectatedPlayerName))}
+            </PositionDisplay>
+            }
         </>
     );
 }

@@ -20,4 +20,13 @@ const SessionIDDisplay = styled(Box)`
     z-index: 9999;
 `;
 
-export { ScoreDisplay, SessionIDDisplay };
+const PositionDisplay = styled(Box)`
+    display: block;
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+    text-align: center;
+    z-index: 9999;
+`;
+
+export { ScoreDisplay, SessionIDDisplay, PositionDisplay };

@@ -104,16 +104,28 @@ export const CreateGameModal = ({ onCreateGame, onCancel, ...modalProps }: Props
             toast.error('Please input your player name!', { autoClose: 1500 });
             return;
         }
-        const response = await axios.get(
-            `${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`
-        );
-        if (response.status === StatusCodes.OK) {
+
+        try {
+            await axios.get(
+                `${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}/${encodeURIComponent(
+                    playerName
+                )}`
+            );
+        } catch (error) {
+            //@ts-ignore
+            toast.error(error.response.data.message);
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_SERVER_URL}/games/${gameKey}`
+            );
             toast.info('Game key correct! Redirecting...', { autoClose: 1000 });
-            localStorage.setItem('player-name', playerName);
-            localStorage.setItem('agarnt-game-key', gameKey);
             setRedirect(true);
-        } else {
-            toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        } catch (error) {
+            //@ts-ignore
+            toast.error(error.response.data.message);
         }
     };
 

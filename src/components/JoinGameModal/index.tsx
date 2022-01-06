@@ -16,8 +16,7 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { OngoingGamesList } from './OngoingGamesList'
-
+import { OngoingGamesList } from './OngoingGamesList';
 
 interface Props {
     onCancel?: () => void;
@@ -35,16 +34,29 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
 
     const handleJoinGame = async () => {
         setIsLoading(true);
-        const response = await axios.get(`${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`);
-        if (response.status === StatusCodes.OK) {
-            toast.success('Game key correct! Redirecting...', { autoClose: 1000 });
-            localStorage.setItem('player-name', playerName);
-            localStorage.setItem('agarnt-game-key', gameId);
+        try {
+            await axios.get(
+                `${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}/${encodeURIComponent(
+                    playerName
+                )}`
+            );
+        } catch (error) {
+            //@ts-ignore
+            toast.error(error.response.data.message);
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_SERVER_URL}/games/${gameId}`
+            );
             //@ts-ignore
             setGameType(response.data.game_type);
             setRedirect(true);
-        } else {
-            toast.error("Sorry but the supplied game key doesn't match any of the games.");
+        } catch (error) {
+            //@ts-ignore
+            toast.error(error.response.data.message);
         }
         setIsLoading(false);
     };
@@ -120,7 +132,7 @@ export const JoinGameModal = ({ onCancel, ...modalProps }: Props) => {
                 >
                     Join as spectator
                 </Checkbox>
-                <OngoingGamesList/>
+                <OngoingGamesList />
             </InputsParent>
         </Modal>
     );

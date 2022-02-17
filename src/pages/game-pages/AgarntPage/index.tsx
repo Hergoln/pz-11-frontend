@@ -50,6 +50,9 @@ function AgarntPage(props: AgarntPageProps) {
     const websocketClosed = (state: ReadyState) =>
         state === ReadyState.CLOSING || state === ReadyState.CLOSED;
 
+    const isPingMessage = (message: any) =>
+        Object.keys(message).length == 1 && message['delta'] !== undefined;
+
     useEffect(() => {
         //@ts-ignore
         canvasRef.current.width = window.innerWidth;
@@ -72,7 +75,11 @@ function AgarntPage(props: AgarntPageProps) {
             console.log('server made a fucky wucky');
         } else {
             const message = await event.data.arrayBuffer();
-            const newStateDTO: AgarntStateDTO = JSON.parse(decodeUtf8(ungzip(message)));
+            const obj = JSON.parse(decodeUtf8(ungzip(message)));
+            if (isPingMessage(obj)) {
+                return;
+            }
+            const newStateDTO: AgarntStateDTO = obj;
             const newState = mapAgarntDTOToState(newStateDTO);
             if (camera && newState) {
                 if (!isSpectator) {
@@ -194,7 +201,7 @@ function AgarntPage(props: AgarntPageProps) {
         }
     };
 
-    const formattedPlayerPosition = (player: AgarntPlayerState | undefined) => 
+    const formattedPlayerPosition = (player: AgarntPlayerState | undefined) =>
         `(${player?.x.toFixed(3)}, ${player?.y.toFixed(3)})`;
 
     return (
@@ -289,11 +296,15 @@ function AgarntPage(props: AgarntPageProps) {
             )}
 
             {
-            <PositionDisplay>
-                {!isSpectator ? 
-                    `(${gameState.player?.x.toFixed(3)}, ${gameState.player?.y.toFixed(3)})` :
-                formattedPlayerPosition(gameState.players.find((p: AgarntPlayerState) => p.name == spectatedPlayerName))}
-            </PositionDisplay>
+                <PositionDisplay>
+                    {!isSpectator
+                        ? `(${gameState.player?.x.toFixed(3)}, ${gameState.player?.y.toFixed(3)})`
+                        : formattedPlayerPosition(
+                              gameState.players.find(
+                                  (p: AgarntPlayerState) => p.name == spectatedPlayerName
+                              )
+                          )}
+                </PositionDisplay>
             }
         </>
     );

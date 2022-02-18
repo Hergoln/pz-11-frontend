@@ -9,6 +9,7 @@ import { styled } from '@mui/material/styles';
 
 import { JoinGameModal } from '../components/JoinGameModal';
 import {CreateGameModal} from '../components/CreateGameModal';
+import {FetchGameArchiveModal} from '../components/FetchGameArchiveModal'
 import Menu from '../components/Menu';
 
 
@@ -19,7 +20,8 @@ class MainPage extends Component {
 
     state = {
         joinGameModalVisible: false,
-        createGameModalVisible: false
+        createGameModalVisible: false,
+        fetchGameArchiveVisible: false
     };
 
     actions = [
@@ -97,8 +99,9 @@ class MainPage extends Component {
                                     </Card>
                                 </Grid>
 
+                                <FetchGameArchiveModal visible={this.state.fetchGameArchiveVisible} onCancel={() => this.setState({ fetchGameArchiveVisible: false })}></FetchGameArchiveModal>
                                 <Grid item xs={3} >
-                                    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{ boxShadow: "0 20px 40px -12px rgba(251, 209, 162,0.8)", backgroundColor: '#F7F7F7' }}>
+                                    <Card onClick={() => this.setState({ fetchGameArchiveVisible: true })} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{ boxShadow: "0 20px 40px -12px rgba(251, 209, 162,0.8)", backgroundColor: '#F7F7F7' }}>
                                         <CardActionArea style={{ backgroundColor: '#F7F7F7', color: '#3F3844' }}>
                                             <CardMedia component="img" sx={{ pt: '5%' }} height="200"
                                                 image="https://images.unsplash.com/photo-1596838132731-3301c3fd4317?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y2FzaW5vfGVufDB8MHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60" alt="Games"

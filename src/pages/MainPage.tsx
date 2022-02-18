@@ -115,10 +115,6 @@ class MainPage extends Component {
                                 </Grid>
                             </Grid>
 
-                            <div style={{ justifyContent: "center", textAlign: "center", padding: 25 }} >
-                                <h3 style={{ fontSize: 8 }}>(Also rage while watching your bot do absolutly the oposite of what you've been teaching that little shit.)</h3>
-                            </div>
-
                             <SpeedDial
                                 ariaLabel="SpeedDial basic example"
                                 sx={{ position: 'absolute', bottom: 16, right: 16 }}

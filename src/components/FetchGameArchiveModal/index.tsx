@@ -9,19 +9,17 @@ import ApiSelect from '../ApiSelect';
 import { capitalize } from '../../global/util/stringOperations';
 
 interface Props {
-    onCreateGame?: (id: string) => void;
     onCancel?: () => void;
     [x: string]: any;
 }
 
-export const FetchGameArchiveModal = ({ onCreateGame, onCancel, ...modalProps }: Props) => {
+export const FetchGameArchiveModal = ({onCancel, ...modalProps }: Props) => {
     const [gameType, setGameType] = useState('');
 
     const handleFetchArchive = async () => {
         const fetchUrl = `${
             process.env.REACT_APP_API_SERVER_URL
         }/stts-pckg/${gameType.toLowerCase()}`;
-        console.log(fetchUrl);
         window.open(fetchUrl);
     };
 
@@ -46,7 +44,7 @@ export const FetchGameArchiveModal = ({ onCreateGame, onCancel, ...modalProps }:
             {...modalProps}
         >
             <h2 style={{ textAlign: 'center', marginBottom: 25 }}>
-                Donwload Zip archives for your bots to learn
+                Download Zip archives for your bots to learn
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <ApiSelect

@@ -11,6 +11,7 @@ import { JoinGameModal } from '../components/JoinGameModal';
 import {CreateGameModal} from '../components/CreateGameModal';
 import {FetchGameArchiveModal} from '../components/FetchGameArchiveModal'
 import Menu from '../components/Menu';
+import { url } from 'inspector';
 
 
 
@@ -86,14 +87,14 @@ class MainPage extends Component {
                                 </Grid>
 
                                 <Grid item xs={3} >
-                                    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{ boxShadow: "0 20px 40px -12px rgba(125, 207, 182,0.8)", backgroundColor: '#F7F7F7' }}>
+                                    <Card onClick={() => open("https://github.com/Hergoln/pz-11-ml")} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} style={{ boxShadow: "0 20px 40px -12px rgba(125, 207, 182,0.8)", backgroundColor: '#F7F7F7' }}>
                                         <CardActionArea style={{ backgroundColor: '#F7F7F7', color: '#3F3844' }}>
                                             <CardMedia component="img" sx={{ pt: '5%' }} height="200"
                                                 image="https://images.unsplash.com/photo-1589254065878-42c9da997008?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1740&q=80" alt="Bot"
                                             />
                                             <CardContent sx={{ flexGrow: 1 }}>
                                                 <Typography gutterBottom variant="h5" component="h2">Get yr bot</Typography>
-                                                <Typography> Download already trained bot 🤖 Since we both know you are to lazy to train it yourself.</Typography>
+                                                <Typography> Download already trained bot 🤖 Since we both know you are too lazy to train it yourself.</Typography>
                                             </CardContent>
                                         </CardActionArea>
                                     </Card>
